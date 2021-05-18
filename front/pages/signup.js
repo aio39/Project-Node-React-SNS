@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import AppLayout from '../components/layouts/AppLayout';
 import FormErrorMessage from '../components/FormErrorMessage';
-import signUpValidation from '../validation/yup';
+import signUpValidation from '../util/validation/yup';
 
 const StyledSignUpForm = styled(Form)`
   > div:not(:first-child) {
