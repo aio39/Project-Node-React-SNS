@@ -1,9 +1,9 @@
 import React from 'react';
 import AppLayout from '../components/layouts/AppLayout';
 
-const Home = () => (
+const SignUp = () => (
   <AppLayout>
-    <div>index</div>
+    <div>회원 가입</div>
   </AppLayout>
 );
-export default Home;
+export default SignUp;
