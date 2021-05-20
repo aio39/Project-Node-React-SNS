@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Card, Col } from 'antd';
+import { Card, Col, Divider, Tag } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import Meta from 'antd/lib/card/Meta';
 import Text from 'antd/lib/typography/Text';
@@ -7,7 +7,7 @@ import Title from 'antd/lib/typography/Title';
 import React from 'react';
 
 const MainPostCard = ({ post }) => {
-  const a = 0;
+  console.log(post);
   return (
     <>
       <Col style={{ backgroundColor: '#f39' }} xs={24} md={12} xl={6}>
@@ -28,6 +28,10 @@ const MainPostCard = ({ post }) => {
               </Text>
             }
           />
+          <Divider orientation="left">Tags</Divider>
+          {post.Tag.map((tag) => (
+            <Tag> {tag.name}</Tag>
+          ))}
         </Card>
         ,
       </Col>
