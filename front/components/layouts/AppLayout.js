@@ -22,7 +22,10 @@ const AppLayout = ({ children }) => {
   return (
     <>
       <Layout>
-        <Header className="header">
+        <Header
+          className="header"
+          style={{ position: 'sticky', top: 0, zIndex: 100 }}
+        >
           <div className="logo" />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[current]}>
             <Menu.Item key="home" icon={<HomeOutlined />}>
