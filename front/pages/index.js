@@ -5,11 +5,11 @@ import Head from 'next/head';
 import { Col, Row } from 'antd';
 import AppLayout from '../components/layouts/AppLayout';
 import { backUrl } from '../config/config';
-import { generateDummyPost } from '../util/dummy';
+import { generateDummyPosts } from '../util/dummy';
 import MainPostCard from '../components/MainPostCard';
 
 // const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
-const fakeFecther = (url) => Promise.resolve(generateDummyPost(12));
+const fakeFecther = (url) => Promise.resolve(generateDummyPosts(12));
 
 const getKey = (pageIndex, previousPageData) => {
   if (previousPageData && !previousPageData.length) return null; // reached the end
@@ -47,7 +47,7 @@ const Home = () => {
   if (!postsDataArray) {
     return <div>로딩중</div>;
   }
-
+  console.log(postsDataArray);
   return (
     <>
       <Head>
