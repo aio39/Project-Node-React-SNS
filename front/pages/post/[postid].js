@@ -1,24 +1,33 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import useSWR from 'swr';
 import { Col, Comment, Divider, Row, Skeleton } from 'antd';
 import { useRouter } from 'next/router';
 import Title from 'antd/lib/typography/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import Image from 'next/image';
 import styled from 'styled-components';
 import Avatar from 'antd/lib/avatar/avatar';
 import AppLayout from '../../components/layouts/AppLayout';
 import { generateDummyPost } from '../../util/dummy';
+import CommentTextArea from '../../components/CommentTextArea';
 
 const ExampleComment = ({ comment }) => {
   const { User, sub } = comment;
+  const [replyTurnOn, setReplyTurnOn] = useState(false);
+  const onClickReply = useCallback(() => {
+    setReplyTurnOn(!replyTurnOn);
+  }, []);
   return (
     <Comment
-      actions={[<span key="comment-nested-reply-to">Reply to</span>]}
+      actions={[
+        <span key="comment-nested-reply-to" onClick={onClickReply}>
+          Reply to
+        </span>,
+      ]}
       author={<a>{User.nickname}</a>}
       avatar={<Avatar src={User.avatar} alt={User.nickname} />}
       content={<p>{comment.content}</p>}
     >
+      {replyTurnOn ? <CommentTextArea /> : null}
       {sub ? sub.map((comment) => <ExampleComment comment={comment} />) : null}
     </Comment>
   );
