@@ -11,13 +11,24 @@ export const generateDummyUser = () => ({
   avatar: 'https://source.unsplash.com/user/avatar/100x100',
 });
 
+export const generateDummyMyData = () => ({
+  id: shortId.generate(),
+  nickname: faker.name.findName(),
+  email: faker.internet.email(),
+  description: faker.lorem.text(200),
+  avatar: 'https://source.unsplash.com/user/avatar/100x100',
+  Post: generateDummyPosts(3), // 최근에 만들 포스터?
+  Bookmark: generateDummyPosts(1),
+  Temporary: generateDummyPosts(1),
+});
+
 export const generateDummyComment = () => ({
   id: shortId.generate(),
   User: generateDummyUser(),
   content: faker.lorem.sentence(),
   createAt: faker.date.recent(),
   sub:
-    Math.random() > 0.5
+    Math.random() > 0.8
       ? [generateDummyComment(), generateDummyComment()]
       : null,
 });
