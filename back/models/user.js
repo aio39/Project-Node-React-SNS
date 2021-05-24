@@ -9,18 +9,22 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(40),
           allowNull: false,
           unique: true,
+          validate: {
+            isEmail: true,
+          },
         },
         nickname: {
           type: DataTypes.STRING(30),
+          allowNull: false,
+          notEmpty: true,
+        },
+        password: {
+          type: DataTypes.STRING(100),
           allowNull: false,
         },
         description: {
           type: DataTypes.STRING(300),
           allowNull: true,
-        },
-        password: {
-          type: DataTypes.STRING(100),
-          allowNull: false,
         },
         avatar: {
           type: DataTypes.STRING(300),
