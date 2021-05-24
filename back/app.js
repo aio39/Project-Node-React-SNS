@@ -2,13 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const passport = require('passport');
+// const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
 
 const db = require('./models');
-const passportConfig = require('./passport');
+// const passportConfig = require('./passport');
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ db.sequelize
   })
   .catch(console.error);
 
-passportConfig();
+// passportConfig();
 
 if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
@@ -64,6 +64,9 @@ app.use(
 app.get('/', (req, res) => {
   res.send('hello express');
 });
+
+const postRouter = require('./routes/post');
+const postsRouter = require('./routes/posts');
 
 app.use('/posts', postsRouter);
 app.use('/post', postRouter);
