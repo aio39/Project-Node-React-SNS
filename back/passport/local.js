@@ -8,6 +8,7 @@ const { User } = require('../models');
 module.exports = () => {
   passport.use(
     new LocalStrategy(
+      //  http://www.passportjs.org/docs/username-password/ 파라메터 수정
       {
         usernameField: 'email',
         passwordField: 'password',
