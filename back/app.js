@@ -1,3 +1,5 @@
+const forest = require('forest-express-sequelize');
+
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
@@ -25,6 +27,7 @@ passportConfig();
 if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
   app.use(
+    '^(?!forest/?$).*',
     cors({
       origin: 'http://localhost:3000',
       credentials: true,
@@ -84,4 +87,13 @@ app.set('port', process.env.PORT || 3005);
 
 app.listen(app.get('port'), () => {
   console.log(`${app.get('port')}번 포트에서 대기중`);
+  app.use(
+    async () =>
+      await forest.init({
+        envSecret: process.env.FOREST_ENV_SECRET,
+        authSecret: process.env.FOREST_AUTH_SECRET,
+        objectMapping: db.Sequelize,
+        connections: { default: db.sequelize },
+      }),
+  );
 });
