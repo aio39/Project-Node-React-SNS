@@ -5,6 +5,10 @@ module.exports = class Post extends Model {
   static init(sequelize) {
     return super.init(
       {
+        title: {
+          type: DataTypes.STRING(200),
+          allowNull: false,
+        },
         content: {
           type: DataTypes.TEXT,
           allowNull: false,
@@ -30,10 +34,9 @@ module.exports = class Post extends Model {
     db.Post.belongsTo(db.User);
     db.Post.belongsToMany(db.Hashtag, {
       through: 'PostHashtag',
-      as: 'HashTag',
     });
-    db.Post.hasMany(db.Comment);
-    db.Post.hasMany(db.Image);
+    db.Post.hasMany(db.Comment, { onDelete: 'cascade', hooks: true });
+    db.Post.hasMany(db.Image, { onDelete: 'cascade', hooks: true });
     db.Post.belongsToMany(db.User, { through: 'BookMark', as: 'Marker' });
   }
 };
