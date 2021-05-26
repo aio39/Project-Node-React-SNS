@@ -22,6 +22,6 @@ module.exports = class Hashtag extends Model {
 
   //  M:N Post
   static associate(db) {
-    db.Hashtag.belongsToMany(db.Post, { through: 'PostHashtag', as: 'Post' });
+    db.Hashtag.belongsToMany(db.Post, { through: 'PostHashtag' });
   }
 };
