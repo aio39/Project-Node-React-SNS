@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Post, Image, Comment, User, Hashtag } = require('../models');
 const { getPostIdAndUserId } = require('../utils/helper');
 
@@ -294,6 +295,44 @@ module.exports = {
       }
       await post.removeMarker(user);
       return res.status(201).send('북마크 취소');
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  },
+  getPosts: async (req, res, next) => {
+    try {
+      const where = {};
+      if (parseInt(req.query.lastId, 10)) {
+        where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+      }
+      const posts = await Post.findAll({
+        where,
+        limit: 12,
+        order: [
+          ['createdAt', 'DESC'],
+          [Comment, 'createdAt', 'DESC'],
+        ],
+        include: [
+          {
+            model: User,
+            attributes: ['id', 'nickname', 'avatar'],
+          },
+          {
+            model: Image,
+          },
+          {
+            model: Comment,
+            include: [
+              {
+                model: User,
+                attributes: ['id', 'nickname', 'avatar'],
+              },
+            ],
+          },
+        ],
+      });
+      res.status(200).json(posts);
     } catch (error) {
       console.error(error);
       next(error);
