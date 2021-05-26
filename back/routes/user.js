@@ -3,9 +3,14 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 const { User } = require('../models');
-const { isNotLoggedIn } = require('../utils/checkLoginMiddleware');
-const router = express.Router();
-router.post('/login', isNotLoggedIn, (req, res, next) => {
+const { isNotLoggedIn, isLoggedIn } = require('../utils/checkLoginMiddleware');
+const { avatarImageUpload } = require('../utils/multer');
+
+const userRouter = express.Router();
+
+userRouter.post('/login', isNotLoggedIn, (req, res, next) => {
+  //  local 전략을 실행하고 로컬 전략의 return값을 넘겨줌.
+  //  local 전략은 동시에 쿠키를 심어줌.
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       console.error(err);
@@ -30,7 +35,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/', isNotLoggedIn, async (req, res, next) => {
+userRouter.post('/', isNotLoggedIn, async (req, res, next) => {
   const { email, nickname, password } = req.body;
   try {
     const exUser = await User.findOne({
@@ -54,10 +59,22 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post('/logout', isLoggedIn, (req, res) => {
+userRouter.get('/userId');
+userRouter.get('/userId/posts');
+
+userRouter.post('/avatar', avatarImageUpload.single('image'), (req, res) => {
+  console.log(req.file);
+  const image = req.file.location;
+  if (image === undefined) {
+    return res.status(400).send('이미지가 존재하지 않습니다.');
+  }
+  return res.status(200).json(image);
+});
+
+userRouter.post('/logout', isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
   res.send('ok');
 });
 
-module.exports = router;
+module.exports = userRouter;
