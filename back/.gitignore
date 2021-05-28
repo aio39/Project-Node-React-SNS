@@ -241,3 +241,5 @@ config.json
 ./mysqlTest/config
 .dotenv
 uploads
+
+log
