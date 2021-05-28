@@ -16,7 +16,7 @@ const s3PostImageUploader = multerS3({
   bucket: '2021-node-project/postImage',
   acl: 'public-read',
   key(req, file, cb) {
-    cb(null, `${Date.now()}.${file.originalname.split('.').pop()}`);
+    cb(null, `original/${Date.now()}.${file.originalname.split('.').pop()}`);
   },
 });
 
@@ -25,7 +25,7 @@ const s3UserAvatarUploader = multerS3({
   bucket: '2021-node-project/avatars',
   acl: 'public-read',
   key(req, file, cb) {
-    cb(null, `originial/${Date.now()}.${file.originalname.split('.').pop()}`);
+    cb(null, `original/${Date.now()}.${file.originalname.split('.').pop()}`);
   },
 });
 
@@ -33,7 +33,7 @@ module.exports = {
   postImageUpload: multer({
     // dest: 'uploads/postImage/',
     limits: {
-      fileSize: 10 * 1024 * 1024,
+      fileSize: 20 * 1024 * 1024,
     },
     storage: s3PostImageUploader,
   }),
