@@ -9,7 +9,7 @@ const logPath = path.join('./', `/log`);
 
 if (!fs.existsSync(logPath)) fs.mkdirSync(logPath, { recursive: true });
 
-console.log(logPath);
+console.log(`📂Query Log File : ./log/`);
 
 const log = fs.createWriteStream(`${logPath}/${date}.log`, { flags: 'a' });
 log.write(`\n\n[${time}]\n`);

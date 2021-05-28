@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 const forest = require('forest-express-sequelize');
 
 const express = require('express');
@@ -7,7 +8,6 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const path = require('path');
 const redis = require('redis');
 
 const db = require('./models');
@@ -16,12 +16,6 @@ const passportConfig = require('./passport');
 dotenv.config();
 
 const app = express();
-db.sequelize
-  .sync()
-  .then(() => {
-    console.log('✔️ DB connected');
-  })
-  .catch(console.error);
 
 passportConfig();
 
@@ -49,7 +43,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-const RedisStore = require('connect-redis')(session); // express-session에 의존적.
+const RedisStore = require('connect-redis')(session);
+// express-session에 의존적.
 const redisClient = redis.createClient({
   url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
   password: process.env.REDIS_PASSWORD,
@@ -79,10 +74,13 @@ app.get('/', (req, res) => {
 const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
+const hashtagRouter = require('./routes/hashtag');
 const debugRouter = require('./routes/debug');
+
 app.use('/posts', postsRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/hashtag', hashtagRouter);
 app.use('/debug', debugRouter);
 
 app.use((err, req, res, next) => {
@@ -92,17 +90,34 @@ app.use((err, req, res, next) => {
   res.json(res.locals.message);
 });
 
-app.set('port', process.env.PORT || 3005);
+async function assertDBConnection() {
+  console.log('➡️ Checking DB connection');
+  try {
+    await db.sequelize.sync({ alter: false, force: false });
+    console.log('✔️ DB connected');
+  } catch (error) {
+    console.error(error);
+    console.log('❌ Unable to connect to the database:');
+    process.exit(1);
+  }
+}
 
-app.listen(app.get('port'), () => {
-  console.log(`${app.get('port')}번 포트에서 대기중`);
-  app.use(
-    async () =>
-      await forest.init({
-        envSecret: process.env.FOREST_ENV_SECRET,
-        authSecret: process.env.FOREST_AUTH_SECRET,
-        objectMapping: db.Sequelize,
-        connections: { default: db.sequelize },
-      }),
-  );
-});
+async function init() {
+  await assertDBConnection();
+
+  app.set('port', process.env.PORT || 3005);
+  app.listen(app.get('port'), () => {
+    console.log(`✔️ ${app.get('port')}번 포트에서 대기중`);
+    // app.use(
+    //   async () =>
+    //     await forest.init({
+    //       envSecret: process.env.FOREST_ENV_SECRET,
+    //       authSecret: process.env.FOREST_AUTH_SECRET,
+    //       objectMapping: db.Sequelize,
+    //       connections: { default: db.sequelize },
+    //     }),
+    // );
+  });
+}
+
+init();
