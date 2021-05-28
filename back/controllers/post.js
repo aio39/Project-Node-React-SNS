@@ -26,8 +26,10 @@ module.exports = {
     console.log(req.isAuthenticated);
     try {
       const hashtags = req.body.content.match(/#[^\s#]+/g);
+      let content = req.body.content.toString();
+      content = content.replace(/#[^\s#]+/g, '');
       const post = await Post.create({
-        content: req.body.content,
+        content,
         title: req.body.title,
         UserId: req.user.id,
       });
@@ -35,7 +37,7 @@ module.exports = {
         const result = await createHashtags(hashtags);
         await post.addHashtags(result.map(v => v[0]));
       }
-      if (req.body.image) {
+      if (req.body.image.length > 0) {
         if (Array.isArray(req.body.image)) {
           const images = await Promise.all(
             req.body.image.map(image => Image.create({ src: image })),
@@ -193,6 +195,14 @@ module.exports = {
       next(error);
     }
   },
+  postImage: async (req, res, next) => {
+    console.log(req.file);
+    const image = req.file?.location;
+    if (image === undefined) {
+      return res.status(400).send('이미지가 존재하지 않습니다.');
+    }
+    return res.status(200).json(image);
+  },
   postCommentToPost: async (req, res, next) => {
     try {
       const post = await Post.findOne({
@@ -302,10 +312,12 @@ module.exports = {
   },
   getPosts: async (req, res, next) => {
     try {
+      // const { q } = req.query;
       const where = {};
       if (parseInt(req.query.lastId, 10)) {
         where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
       }
+      // q ? wher
       const posts = await Post.findAll({
         where,
         limit: 12,
@@ -329,6 +341,9 @@ module.exports = {
                 attributes: ['id', 'nickname', 'avatar'],
               },
             ],
+          },
+          {
+            model: Hashtag,
           },
         ],
       });
