@@ -35,6 +35,11 @@ userRouter.post('/login', isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
+userRouter.get('/', (req, res) => {
+  console.log(req.user);
+  return res.json(req.user || false);
+});
+
 userRouter.post('/', isNotLoggedIn, async (req, res, next) => {
   const { email, nickname, password } = req.body;
   try {
