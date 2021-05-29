@@ -1,13 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import Title from 'antd/lib/typography/Title';
 import AppLayout from '../components/layouts/AppLayout';
 import FormErrorMessage from '../components/FormErrorMessage';
-import signUpValidation from '../util/validation/yup';
+import { signUpValidation } from '../util/validation/yup';
 
 const StyledSignUpForm = styled(Form)`
   > div:not(:first-child) {
@@ -37,8 +40,24 @@ const SignUp = () => {
     mode: 'onBlur',
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const router = useRouter();
+
+  const [isLoadingPostSingUp, setIsLoadingPostSingUp] = useState(false);
+  const [isFailedPost, setIsFailedPost] = useState(false);
+
+  const onSubmit = handleSubmit(async data => {
+    setIsLoadingPostSingUp(true);
+    setIsFailedPost(false);
+    console.log(errors);
+    const result = await axios.post('/user', data);
+    setIsLoadingPostSingUp(false);
+    if (result.data === 'ok') {
+      console.log('성공', result);
+      router.push('/');
+    } else {
+      console.log('실패', result);
+      setIsFailedPost(true);
+    }
   });
 
   return (
@@ -48,16 +67,16 @@ const SignUp = () => {
       </Head>
       <StyledSignUpForm onFinish={onSubmit} size="large">
         <div>
-          <label htmlFor="userId">아이디</label>
+          <label htmlFor="email">아이디</label>
           <Controller
-            name="userId"
+            name="email"
             type="email"
             control={control}
             defaultValue=""
             render={({ field }) => <Input {...field} />}
           />
-          {errors.userId && (
-            <FormErrorMessage errorMessage={errors.userId.message} />
+          {errors.email && (
+            <FormErrorMessage errorMessage={errors.email.message} />
           )}
         </div>
         <div>
@@ -77,7 +96,7 @@ const SignUp = () => {
         <div>
           <label htmlFor="password">비밀번호</label>
           <Controller
-            render={({ field }) => <Input {...field} />}
+            render={({ field }) => <Input.Password {...field} />}
             type="password"
             name="password"
             control={control}
@@ -91,7 +110,7 @@ const SignUp = () => {
         <div>
           <label htmlFor="password2">비밀번호</label>
           <Controller
-            render={({ field }) => <Input {...field} />}
+            render={({ field }) => <Input.Password {...field} />}
             type="password"
             name="password2"
             control={control}
@@ -110,7 +129,7 @@ const SignUp = () => {
             render={({ field }) => (
               <Checkbox
                 {...field}
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={e => field.onChange(!e.target.value)}
               >
                 약관에 동의합니다.
               </Checkbox>
@@ -121,9 +140,16 @@ const SignUp = () => {
           )}
         </div>
         <div>
-          <Button type="primary" htmlType="submit" block>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isLoadingPostSingUp}
+            block
+          >
             가입하기
           </Button>
+
+          {isFailedPost ? <Title> 가입 실패, 다시 시도해주세요.</Title> : null}
         </div>
       </StyledSignUpForm>
     </AppLayout>
