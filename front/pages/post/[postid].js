@@ -1,42 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import useSWR from 'swr';
-import { Col, Comment, Divider, Row, Skeleton } from 'antd';
+import { Col, Divider, Row, Skeleton } from 'antd';
 import { useRouter } from 'next/router';
-import Title from 'antd/lib/typography/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import styled from 'styled-components';
-import Avatar from 'antd/lib/avatar/avatar';
+import Axios from 'axios';
+import Title from 'antd/lib/typography/Title';
 import AppLayout from '../../components/layouts/AppLayout';
-import { generateDummyPost } from '../../util/dummy';
-import CommentTextArea from '../../components/CommentTextArea';
+import PostComment from '../../components/PostComment';
 
-const ExampleComment = ({ comment }) => {
-  const { User, sub } = comment;
-  const [replyTurnOn, setReplyTurnOn] = useState(false);
-  const onClickReply = useCallback(() => {
-    setReplyTurnOn(!replyTurnOn);
-  }, []);
-  return (
-    <Comment
-      actions={[
-        <span key="comment-nested-reply-to" onClick={onClickReply}>
-          Reply to
-        </span>,
-      ]}
-      author={<a>{User.nickname}</a>}
-      avatar={<Avatar src={User.avatar} alt={User.nickname} />}
-      content={<p>{comment.content}</p>}
-    >
-      {replyTurnOn ? <CommentTextArea /> : null}
-      {sub ? sub.map((comment) => <ExampleComment comment={comment} />) : null}
-    </Comment>
-  );
+const fetcher = async url => {
+  const result = await Axios.get(url);
+  return result.data;
 };
-
-const fetcher = (url) =>
-  new Promise((resolve) =>
-    setTimeout(() => resolve(generateDummyPost()), 1000),
-  );
 
 const ImageWrapper = styled.div`
   position: relative;
@@ -48,12 +24,10 @@ const ImageWrapper = styled.div`
 const Post = () => {
   const router = useRouter();
   const { postid } = router.query;
+
   const { data: postData, errors: postError } = useSWR(
     `/post/${postid}`,
     fetcher,
-    {
-      dedupingInterval: 10000,
-    },
   );
 
   console.log(postData);
@@ -71,10 +45,7 @@ const Post = () => {
     <AppLayout>
       <Row justify="center" align="top">
         <Col style={{ backgroundColor: '##CCCCCC' }} xs={24} md={24} xl={18}>
-          <div>{postData.id}</div>
-          <div>로딩완료</div>
-          <div>{postid}</div>
-          {postData.Images?.map((image) => (
+          {postData.Images?.map(image => (
             <ImageWrapper>
               <img
                 src={image.src}
@@ -95,9 +66,13 @@ const Post = () => {
           xl={6}
         >
           <Divider orientation="left">덧글</Divider>
-          {postData.Comments.map((comment) => (
-            <ExampleComment comment={comment} />
-          ))}
+          {postData.Comments.length > 0 ? (
+            postData.Comments.map(comment => <PostComment comment={comment} />)
+          ) : (
+            <>
+              <Title level={3}>덧글이 없습니다.</Title>
+            </>
+          )}
         </Col>
       </Row>
     </AppLayout>
