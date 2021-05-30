@@ -1,58 +1,82 @@
+/* eslint-disable react/jsx-wrap-multilines */
+/* eslint-disable operator-linebreak */
 /* eslint-disable react/prop-types */
-import { Card, Col, Divider, Tag } from 'antd';
+import { Card, Col, Divider, Space, Tag } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import Meta from 'antd/lib/card/Meta';
 import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
-import React from 'react';
+import React, { memo } from 'react';
 import Link from 'next/link';
+import dayjs from 'dayjs';
+import { randomColorSel } from '../util/randomColor';
 
 const MainPostCard = ({ post }) => (
   <>
-    <Col style={{ backgroundColor: '#f39' }} xs={24} md={12} xl={6}>
+    <Col
+      style={{
+        alignSelf: 'stretch',
+        alignItems: 'stretch',
+        marginBottom: '1vh',
+      }}
+      xs={24}
+      md={12}
+      xl={6}
+    >
       <Link href={`/post/${post.id}`}>
         <Card
           title={`${post.title}`}
           hoverable
-          style={{ width: '100%' }}
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            boxShadow: 'rgba(0, 0, 0, 0.14) 0px 4px 16px 0px',
+          }}
           cover={
             <img
               alt={post.title}
-              src={
-                post.Images[0]?.src ||
-                'https://source.unsplash.com/user/avatar/100x100'
-              }
+              src={post.Images[0]?.src || '/not_image.png'}
+              style={{
+                maxHeight: '25vh',
+                objectFit: 'cover',
+                objectPosition: 'center',
+              }}
             />
           }
         >
           <Meta
-            avatar={
-              <Avatar
-                src={
-                  post.User.avatar ||
-                  'https://source.unsplash.com/user/avatar/100x100'
-                }
-              />
-            }
-            title={<Title level={3}>{post.title}</Title>}
-            description={
-              <Text>
-                {post.content.length > 150
-                  ? `${post.content.slice(0, 150)}...`
-                  : post.content}
-              </Text>
-            }
+            avatar={<Avatar src={post.User.avatar || '/not_avatar.jpg'} />}
+            title={<Title level={3}>{post.User.nickname}</Title>}
           />
-          <Divider orientation="left">Tags</Divider>
-          {post.Hashtags.map((tag) => (
-            <Link href={`/tag/${tag.name}`}>
-              <Tag> {tag.name}</Tag>
-            </Link>
-          ))}
+          <Space direction="vertical">
+            <Text>
+              {post.content.length > 150
+                ? `${post.content.slice(0, 150)}...`
+                : post.content}
+            </Text>
+            <Text type="secondary">
+              {dayjs(post.createAt).format('YYYY/MM/DD')}
+            </Text>
+          </Space>
+          {post.Hashtags.length > 0 && (
+            <>
+              <Divider orientation="left">Tags</Divider>
+              {post.Hashtags.map(tag => (
+                <Link href={`/tag/${tag.name}`}>
+                  <Tag style={{ weight: 600 }} color={randomColorSel()}>
+                    {' '}
+                    {tag.name}
+                  </Tag>
+                </Link>
+              ))}
+            </>
+          )}
         </Card>
       </Link>
     </Col>
   </>
 );
 
-export default MainPostCard;
+export default memo(MainPostCard);
