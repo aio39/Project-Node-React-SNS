@@ -24,11 +24,9 @@ const ImageWrapper = styled.div`
 const Post = () => {
   const router = useRouter();
   const { postid } = router.query;
+  const URL = `/post/${postid}`;
 
-  const { data: postData, errors: postError } = useSWR(
-    `/post/${postid}`,
-    fetcher,
-  );
+  const { data: postData, errors: postError } = useSWR(URL, fetcher);
 
   console.log(postData);
 

@@ -37,3 +37,7 @@ export const loginValidation = yup.object().shape({
     .max(15, '비밀번호는 15자리 이하여야 합니다.')
     .min(4, '비밀번호는 10자리 이상이어야 합니다.'),
 });
+
+export const commentValidation = yup.object().shape({
+  content: yup.string().required('코멘트를 입력해주세요.'),
+});
