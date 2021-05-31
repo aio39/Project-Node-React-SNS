@@ -54,7 +54,7 @@ const Login = () => {
     setIsFailedPost(false);
     const result = await axios.post('/user/login', data);
     setIsLoadingPostSingUp(false);
-    if (result.data === 'ok') {
+    if (result.statusText === 'OK') {
       console.log('성공', result);
       const res = await revalidate();
       console.log(res);
