@@ -7,6 +7,7 @@ import AppLayout from '../components/layouts/AppLayout';
 import { generateDummyPosts } from '../util/dummy';
 import MainPostCard from '../components/MainPostCard';
 import PostWriteButton from '../components/PostWriteButton';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 const fetcher = url =>
   axios.get(url, { withCredentials: true }).then(result => {
@@ -26,6 +27,7 @@ const getKey = (pageIndex, previousPageData) => {
 
 const Home = () => {
   const [postsLoadLimit, setPostsLoadLimit] = useState(12);
+  const [target, setTarget] = useState(null);
 
   const {
     data: postsDataArray,
@@ -49,29 +51,24 @@ const Home = () => {
   );
 
   const hasMorePosts = true;
-  useEffect(() => {
-    function onScroll() {
-      if (
-        window.pageYOffset + document.documentElement.clientHeight >
-        document.documentElement.scrollHeight - 100
-      ) {
+
+  useInfiniteScroll({
+    target,
+    onIntersect: ([{ isIntersecting }]) => {
+      if (isIntersecting) {
+        console.log('interect!');
         if (postsDataArray && postsDataArray.length === size) {
           console.log('온 스크롤 동작');
           setSize(size + 1);
         }
       }
-    }
-    window.addEventListener('scroll', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, [postsDataArray]);
+    },
+  });
 
   const loadMorePosts = () => {
     setSize(size + 1);
   };
 
-  console.log(postsDataArray);
   return (
     <>
       <Head>
@@ -88,9 +85,9 @@ const Home = () => {
                 <MainPostCard post={post} />
               ))}
             </Row>
-            {/* <Button type="primary" onClick={loadMorePosts}>
+            <Button ref={setTarget} type="primary" onClick={loadMorePosts}>
               불러오기
-            </Button> */}
+            </Button>
           </>
         )}
       </AppLayout>
