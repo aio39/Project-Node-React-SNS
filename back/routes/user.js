@@ -67,14 +67,18 @@ userRouter.post('/', isNotLoggedIn, async (req, res, next) => {
 userRouter.get('/userId');
 userRouter.get('/userId/posts');
 
-userRouter.post('/avatar', avatarImageUpload.single('image'), (req, res) => {
-  console.log(req.file);
-  const image = req.file.location;
-  if (image === undefined) {
-    return res.status(400).send('이미지가 존재하지 않습니다.');
-  }
-  return res.status(200).json(image);
-});
+userRouter.post(
+  '/avatar',
+  avatarImageUpload.single('image'),
+  async (req, res) => {
+    const imageURL = req.file.location;
+    if (imageURL === undefined) {
+      return res.status(400).send('이미지가 존재하지 않습니다.');
+    }
+    await User.update({ avatar: imageURL }, { where: { id: req.user.id } });
+    return res.status(200).json(imageURL);
+  },
+);
 
 userRouter.post('/logout', isLoggedIn, (req, res) => {
   req.logout();
