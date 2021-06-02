@@ -75,28 +75,26 @@ const Home = () => {
       </Head>
       <PostWriteButton />
       <AppLayout>
-        {!postsDataArray ? (
-          <Spin size="large" />
-        ) : (
-          <>
-            <Row gutter={{ xs: 8, sm: 16, md: 24 }} align="top" justify="start">
-              {postsDataArray.flat().map(post => (
-                <MainPostCard post={post} />
-              ))}
-              {showSkeleton &&
-                Array(12)
-                  .fill()
-                  .map(a => <MainPostCardSkeleton />)}
-            </Row>
-
+        <>
+          <Row gutter={{ xs: 8, sm: 16, md: 24 }} align="top" justify="start">
+            {postsDataArray?.flat().map(post => (
+              <MainPostCard post={post} />
+            ))}
+            {showSkeleton &&
+              Array(12)
+                .fill()
+                .map(a => <MainPostCardSkeleton />)}
+          </Row>
+          {postsDataArray && (
             <Row justify="center">
               <Col>
                 <Statistic title="post" value={postsDataArray.flat().length} />
                 <div ref={setTarget}></div>
               </Col>
             </Row>
-          </>
-        )}
+          )}
+        </>
+        )
       </AppLayout>
     </>
   );
