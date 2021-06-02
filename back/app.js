@@ -90,6 +90,10 @@ app.use((err, req, res, next) => {
   res.json(res.locals.message);
 });
 
+process.on('uncaughtException', err => {
+  console.log(`😱uncaughtException${err}`);
+});
+
 async function assertDBConnection() {
   console.log('➡️ Checking DB connection');
   try {
@@ -102,11 +106,12 @@ async function assertDBConnection() {
   }
 }
 
+let server;
 async function init() {
   await assertDBConnection();
 
   app.set('port', process.env.PORT || 3005);
-  app.listen(app.get('port'), () => {
+  server = await app.listen(app.get('port'), () => {
     console.log(`✔️ ${app.get('port')}번 포트에서 대기중`);
     // app.use(
     //   async () =>
@@ -121,3 +126,12 @@ async function init() {
 }
 
 init();
+
+const shutDown = async () => {
+  console.log('Received kill signal, shutting down gracefully');
+  await db.sequelize.close();
+  console.log('DB Connection Closed');
+  server.close();
+  console.log('Express Server Closed');
+};
+process.once('SIGHUP', shutDown);
