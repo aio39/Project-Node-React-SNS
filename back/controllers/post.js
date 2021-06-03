@@ -1,3 +1,4 @@
+const sequelize = require('sequelize');
 const { Op } = require('sequelize');
 const { Post, Image, Comment, User, Hashtag } = require('../models');
 const { getPostIdAndUserId } = require('../utils/helper');
@@ -37,7 +38,7 @@ module.exports = {
         const result = await createHashtags(hashtags);
         await post.addHashtags(result.map(v => v[0]));
       }
-      if (req.body.image.length > 0) {
+      if (req.body.image?.length > 0) {
         if (Array.isArray(req.body.image)) {
           const images = await Promise.all(
             req.body.image.map(image => Image.create({ src: image })),
@@ -335,18 +336,14 @@ module.exports = {
           },
           {
             model: Comment,
-            include: [
-              {
-                model: User,
-                attributes: ['id', 'nickname', 'avatar'],
-              },
-            ],
+            attributes: [],
           },
           {
             model: Hashtag,
           },
         ],
       });
+      console.log(posts[0]);
       res.status(200).json(posts);
     } catch (error) {
       console.error(error);
