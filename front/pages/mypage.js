@@ -20,12 +20,22 @@ const fakeFecther = url =>
     const data = generateDummyMyData();
     setTimeout(() => resolve(data), 2000);
   });
+function isAnyEditing(obj) {
+  return Object.values(obj).includes(true);
+}
+
+const notEditing = {
+  nickname: false,
+  description: false,
+  password: false,
+};
 
 const MyPage = () => {
   const { data: userData, revalidate } = useSWR('/user', fetcher);
 
-  const [isLoadingPostSingUp, setIsLoadingPatch] = useState(false);
-  const [isFailedPost, setIsFailedPatch] = useState(false);
+  const [isLoadingPatch, setIsLoadingPatch] = useState(false);
+  const [isFailedPatch, setIsFailedPatch] = useState(false);
+  const [arrayOfEditing, setArrayOfEditing] = useState(notEditing);
 
   const uploadOnchange = ({ file }) => {
     if (file.status === 'done') {
@@ -48,25 +58,25 @@ const MyPage = () => {
   const onSubmit = handleSubmit(async data => {
     console.log(data);
     // console.log(errors);
-    setIsLoadingPatch(true);
     setIsFailedPatch(false);
+    setIsLoadingPatch(true);
     const result = await axios.patch('/user', data);
     setIsLoadingPatch(false);
     console.log(result);
-    if (result.statusText === 'OK') {
+    if (result.statusText === 'Created') {
       console.log('성공', result);
       const res = await revalidate();
       console.log(res);
+      setArrayOfEditing({ ...notEditing });
     } else {
       console.log('실패', result);
       setIsFailedPatch(true);
     }
   });
 
-  const [isEditingName, setIsEditingName] = useState(false);
-
-  const handleNameChange = () => {
-    setIsEditingName(p => !p);
+  const handleNameChange = e => {
+    console.log(e);
+    setArrayOfEditing(p => ({ ...p, nickname: !p.nickname }));
     return null;
   };
 
@@ -114,7 +124,7 @@ const MyPage = () => {
                 defaultValue={userData.nickname}
                 render={({ field }) => (
                   <Input
-                    disabled={!isEditingName}
+                    disabled={!arrayOfEditing.nickname}
                     prefix={
                       <>
                         <Text>이름</Text> <Divider type="vertical" />
@@ -132,7 +142,7 @@ const MyPage = () => {
                 )}
               />
 
-              {isEditingName ? (
+              {isAnyEditing(arrayOfEditing) ? (
                 <Affix
                   target={() => window}
                   style={{ position: 'fixed', bottom: '10px' }}
@@ -140,9 +150,15 @@ const MyPage = () => {
                   <Button
                     type="primary"
                     htmlType="submit"
-                    loading={isLoadingPostSingUp}
+                    loading={isLoadingPatch}
                   >
-                    SAVE
+                    {`${
+                      isLoadingPatch
+                        ? 'Saving'
+                        : isFailedPatch
+                        ? '실패'
+                        : 'save'
+                    }  `}
                   </Button>
                 </Affix>
               ) : null}
