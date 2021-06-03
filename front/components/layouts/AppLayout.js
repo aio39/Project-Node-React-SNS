@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AutoComplete, Input, Layout, Menu } from 'antd';
-
+import { useDebounce } from '@react-hook/debounce';
 import {
   HomeOutlined,
   UserOutlined,
@@ -37,13 +37,13 @@ const AppLayout = ({ children }) => {
   const current = router.pathname === '/' ? 'home' : router.pathname.slice(1);
 
   const { data: userData } = useSWR('/user', fetcher);
-
   const [options, setOptions] = useState([]);
-  const [searchParams, setSearchParams] = useState('');
+  const [searchParams, setSearchParams] = useDebounce('', 500, false);
   const {
     data: searchData,
     error: searchError,
     revalidate,
+    isValidating,
   } = useSWR(
     searchParams ? ['/debug/tagsearch', searchParams] : null,
     fetchWithParams,
@@ -52,6 +52,7 @@ const AppLayout = ({ children }) => {
   const handleSearch = value => {
     setOptions(value ? searchResult(value) : []);
   };
+  console.log('isValidating ', isValidating);
 
   const onSelect = value => {
     console.log('onSelect', value);
@@ -63,7 +64,8 @@ const AppLayout = ({ children }) => {
     console.log('searchData:', searchData);
     console.log(searchParams);
     console.log('서치 실행');
-    if (!(searchData?.length > 0)) return null;
+    if (!searchData) return null;
+    if (searchData.length === 0) return <div>검색 결과 없음.</div>;
     return searchData.map((data, idx) => {
       const category = `${query}${idx}`;
       return {
