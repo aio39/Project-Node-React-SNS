@@ -65,23 +65,28 @@ userRouter.post('/', isNotLoggedIn, async (req, res, next) => {
 });
 
 userRouter.patch('/', async (req, res, next) => {
-  const { oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword, nickname, description } = req.body;
   const { id } = req.user;
-  console.log(req.user);
   try {
     const user = await User.findOne({
       where: {
         id,
       },
-      attributes: ['password'],
     });
     if (!user) {
       return res.status(403).send('아이디가 존재하지 않습니다.');
     }
-    const isSamePassword = await bcrypt.compare(oldPassword, user.password);
-    if (!isSamePassword)
-      return res.status(403).send('Password가 일치하지 않습니다.');
-    user.password = await bcrypt.hash(newPassword, 12);
+
+    if (oldPassword && newPassword) {
+      const isSamePassword = await bcrypt.compare(oldPassword, user.password);
+      if (!isSamePassword)
+        return res.status(403).send('Password가 일치하지 않습니다.');
+      user.password = await bcrypt.hash(newPassword, 12);
+    }
+
+    if (nickname) user.nickname = nickname;
+    if (description) user.description = description;
+
     await user.save();
     res.status(201).send('ok');
   } catch (error) {
