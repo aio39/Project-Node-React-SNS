@@ -1,5 +1,6 @@
-import { UploadOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Col, Divider, Row, Upload } from 'antd';
+import { FormOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Col, Divider, Input, Row, Upload } from 'antd';
+import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import useSWR from 'swr';
@@ -15,15 +16,18 @@ const fakeFecther = url =>
   });
 
 const MyPage = () => {
-  const { data: userData } = useSWR('/user', fetcher);
+  const { data: userData, revalidate } = useSWR('/user', fetcher);
 
   const uploadOnchange = ({ file }) => {
     if (file.status === 'done') {
       console.log('업로드!');
+      revalidate();
     }
   };
   console.log(userData);
   if (!userData) return null;
+
+  const handleNameChange = () => {};
 
   return (
     <>
@@ -54,9 +58,30 @@ const MyPage = () => {
               withCredentials="true"
               action="http://localhost:3005/user/avatar"
               onChange={uploadOnchange}
+              showUploadList={false}
+              maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>아바타 업로드</Button>
+              <Button icon={<UploadOutlined />} />
             </Upload>
+          </Col>
+          <Col xl={8} sm={24}>
+            <Input
+              prefix={
+                <>
+                  <Text>이름</Text> <Divider type="vertical" />
+                </>
+              }
+              suffix={
+                <Button
+                  shape="circle"
+                  onClick={handleNameChange}
+                  loading={false}
+                  icon={<FormOutlined />}
+                />
+              }
+              disabled={false}
+              defaultValue={userData.nickname}
+            />
           </Col>
         </Row>
         <Row>
