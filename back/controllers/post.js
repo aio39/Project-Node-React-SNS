@@ -1,3 +1,4 @@
+const { urlencoded } = require('express');
 const sequelize = require('sequelize');
 const { Op } = require('sequelize');
 const { Post, Image, Comment, User, Hashtag } = require('../models');
@@ -313,12 +314,12 @@ module.exports = {
   },
   getPosts: async (req, res, next) => {
     try {
-      // const { q } = req.query;
+      const { tag } = req.query;
       const where = {};
       if (parseInt(req.query.lastId, 10)) {
         where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
       }
-      // q ? wher
+
       const posts = await Post.findAll({
         where,
         limit: 12,
@@ -340,10 +341,12 @@ module.exports = {
           },
           {
             model: Hashtag,
+            attributes: ['name'],
+            where: tag ? { name: decodeURI(tag) } : null,
+            required: !!tag,
           },
         ],
       });
-      console.log(posts[0]);
       res.status(200).json(posts);
     } catch (error) {
       console.error(error);
