@@ -44,7 +44,6 @@ const MyPage = () => {
     }
   };
   console.log(userData);
-  if (!userData) return null;
 
   const {
     control,
@@ -79,6 +78,8 @@ const MyPage = () => {
     setArrayOfEditing(p => ({ ...p, nickname: !p.nickname }));
     return null;
   };
+
+  if (!userData) return null;
 
   return (
     <>
@@ -145,12 +146,14 @@ const MyPage = () => {
               {isAnyEditing(arrayOfEditing) ? (
                 <Affix
                   target={() => window}
-                  style={{ position: 'fixed', bottom: '10px' }}
+                  style={{ position: 'fixed', bottom: '20px' }}
                 >
                   <Button
+                    block
                     type="primary"
                     htmlType="submit"
                     loading={isLoadingPatch}
+                    size="large"
                   >
                     {`${
                       isLoadingPatch
