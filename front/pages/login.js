@@ -48,19 +48,16 @@ const Login = () => {
   const [isFailedPost, setIsFailedPost] = useState(false);
 
   const onSubmit = handleSubmit(async data => {
-    console.log(data);
-    console.log(errors);
     setIsLoadingPostSingUp(true);
     setIsFailedPost(false);
-    const result = await axios.post('/user/login', data);
-    setIsLoadingPostSingUp(false);
-    if (result.statusText === 'OK') {
-      console.log('성공', result);
-      const res = await revalidate();
-      console.log(res);
-    } else {
-      console.log('실패', result);
+    try {
+      await axios.post('/user/login', data);
+      await revalidate();
+    } catch (error) {
+      console.log('실패', error);
       setIsFailedPost(true);
+    } finally {
+      setIsLoadingPostSingUp(false);
     }
   });
 
