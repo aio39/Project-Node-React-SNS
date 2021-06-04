@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import useSWR from 'swr';
-import { Col, Divider, Row, Skeleton } from 'antd';
+import { Button, Col, Divider, Row, Skeleton } from 'antd';
 import { useRouter } from 'next/router';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import styled from 'styled-components';
@@ -8,6 +8,7 @@ import Axios from 'axios';
 import Title from 'antd/lib/typography/Title';
 import AppLayout from '../../components/layouts/AppLayout';
 import PostComment from '../../components/PostComment';
+import CommentTextArea from '../../components/CommentTextArea';
 
 const fetcher = async url => {
   const result = await Axios.get(url);
@@ -27,7 +28,10 @@ const Post = () => {
   const URL = `/post/${postid}`;
 
   const { data: postData, errors: postError } = useSWR(URL, fetcher);
-
+  const [replyTurnOn, setReplyTurnOn] = useState(false);
+  const onClickReply = useCallback(() => {
+    setReplyTurnOn(!replyTurnOn);
+  }, []);
   console.log(postData);
 
   if (!postData) {
@@ -70,6 +74,13 @@ const Post = () => {
             <>
               <Title level={3}>덧글이 없습니다.</Title>
             </>
+          )}
+          {replyTurnOn ? (
+            <CommentTextArea PostId={postid} setRootReplyOn={setReplyTurnOn} />
+          ) : (
+            <Button type="primary" onClick={onClickReply} block>
+              코멘트 작성
+            </Button>
           )}
         </Col>
       </Row>

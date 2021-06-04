@@ -4,11 +4,12 @@ import TextArea from 'antd/lib/input/TextArea';
 import Axios from 'axios';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { mutate } from 'swr';
 
 import { commentValidation } from '../util/validation/yup';
 import PostComment from './PostComment';
 
-const CommentTextArea = ({ PostId, CommentId }) => {
+const CommentTextArea = ({ PostId, CommentId, setRootReplyOn }) => {
   const [comment, setComment] = useState(null);
   const {
     control,
@@ -22,13 +23,16 @@ const CommentTextArea = ({ PostId, CommentId }) => {
 
   const onSubmit = handleSubmit(async data => {
     console.log(errors);
-
-    data.superCommentId = CommentId;
+    if (CommentId) data.superCommentId = CommentId;
     console.log(CommentId);
     console.log(data);
     const result = await Axios.post(`/post/${PostId}/comment`, data);
     console.log('axios 결과', result);
     if (result.statusText === 'Created') setComment(result.data);
+    if (setRootReplyOn) {
+      setRootReplyOn(p => !p);
+      mutate(`/post/${PostId}`);
+    }
   });
 
   if (comment) return <PostComment comment={comment} />;
