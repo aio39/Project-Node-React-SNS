@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, Input, notification } from 'antd';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Title from 'antd/lib/typography/Title';
+import { SmileOutlined } from '@ant-design/icons';
 import AppLayout from '../components/layouts/AppLayout';
 import FormErrorMessage from '../components/FormErrorMessage';
 import { signUpValidation } from '../util/validation/yup';
@@ -48,15 +49,18 @@ const SignUp = () => {
   const onSubmit = handleSubmit(async data => {
     setIsLoadingPostSingUp(true);
     setIsFailedPost(false);
-    console.log(errors);
-    const result = await axios.post('/user', data);
-    setIsLoadingPostSingUp(false);
-    if (result.data === 'ok') {
-      console.log('성공', result);
+    try {
+      await axios.post('/user', data);
+      notification.success({
+        message: '가입해주셔서 감사합니다!',
+        description: '로그인 후에 사용해주시길 바랍니다.',
+      });
       router.push('/');
-    } else {
-      console.log('실패', result);
+    } catch (error) {
+      console.log('실패', error);
       setIsFailedPost(true);
+    } finally {
+      setIsLoadingPostSingUp(false);
     }
   });
 
