@@ -61,12 +61,7 @@ const Post = () => {
           <Title>{postData.title}</Title>
           <Paragraph>{postData.content}</Paragraph>
         </Col>
-        <Col
-          style={{ backgroundColor: '#39c5bb', maxHeight: '100%' }}
-          xs={24}
-          md={24}
-          xl={6}
-        >
+        <Col style={{ maxHeight: '100%' }} xs={24} md={24} xl={6}>
           <Divider orientation="left">덧글</Divider>
           {postData.Comments.length > 0 ? (
             postData.Comments.map(comment => <PostComment comment={comment} />)

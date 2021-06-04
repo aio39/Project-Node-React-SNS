@@ -5,7 +5,7 @@ import Axios from 'axios';
 import CommentTextArea from './CommentTextArea';
 
 const PostComment = ({ comment }) => {
-  const { User, sub, PostId, id: CommentId } = comment;
+  const { User, Reply, PostId, id: CommentId } = comment;
   const [replyTurnOn, setReplyTurnOn] = useState(false);
   const onClickReply = useCallback(() => {
     setReplyTurnOn(!replyTurnOn);
@@ -24,7 +24,9 @@ const PostComment = ({ comment }) => {
       {replyTurnOn ? (
         <CommentTextArea PostId={PostId} CommentId={CommentId} />
       ) : null}
-      {sub ? sub.map(comment => <PostComment comment={comment} />) : null}
+      {Reply?.map(comment => (
+        <PostComment comment={comment} />
+      ))}
     </Comment>
   );
 };
