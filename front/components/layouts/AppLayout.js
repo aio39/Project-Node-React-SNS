@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -12,9 +12,8 @@ import {
 } from '@ant-design/icons';
 import useSWR from 'swr';
 import Search from 'antd/lib/input/Search';
-import fetcher from '../../util/fetcher';
-import { useState } from 'react';
 import Axios from 'axios';
+import fetcher from '../../util/fetcher';
 
 const { Header, Content, Footer } = Layout;
 
@@ -98,7 +97,14 @@ const AppLayout = ({ children }) => {
       <Layout style={{ minHeight: '100vh' }}>
         <Header
           className="header"
-          style={{ position: 'sticky', top: 0, zIndex: 100 }}
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 100,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           <div className="logo" />
           <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[current]}>

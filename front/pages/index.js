@@ -73,7 +73,6 @@ const Home = () => {
       <Head>
         <title>메인 홈</title>
       </Head>
-      <PostWriteButton />
       <AppLayout>
         <>
           <Row gutter={{ xs: 8, sm: 16, md: 24 }} align="top" justify="start">
@@ -89,7 +88,7 @@ const Home = () => {
             <Row justify="center">
               <Col>
                 <Statistic title="post" value={postsDataArray.flat().length} />
-                <div ref={setTarget}></div>
+                <div ref={setTarget} />
               </Col>
             </Row>
           )}
