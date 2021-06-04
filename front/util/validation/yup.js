@@ -3,9 +3,8 @@ import * as yup from 'yup';
 export const signUpValidation = yup.object().shape({
   email: yup
     .string()
-    .required('아이디를 입력해주세요.')
-    .max(12, '아이디는 12자리 이하여야 합니다.')
-    .min(6, '아이디는 6자리 이상이어야 합니다.'),
+    .email('이메일 형식이 옳바르지 않습니다.')
+    .required('이메일을 입력해주세요.'),
   nickname: yup
     .string()
     .required('닉네임을 입력해주세요.')
@@ -13,8 +12,12 @@ export const signUpValidation = yup.object().shape({
     .min(3, '닉네임은 3자리 이상이어야 합니다.'),
   password: yup
     .string()
+    .matches(
+      /^(?=.*[a-zA-Z])(?=.*[0-9]).*$/,
+      '영문자와 숫자가 포함되어야 합니다.',
+    )
     .required('비밀번호를 입력해주세요.')
-    .max(15, '비밀번호는 15자리 이하여야 합니다.')
+    .max(15, '비밀번호는 20자리 이하여야 합니다.')
     .min(4, '비밀번호는 10자리 이상이어야 합니다.'),
   password2: yup
     .string()
@@ -28,16 +31,14 @@ export const signUpValidation = yup.object().shape({
 export const loginValidation = yup.object().shape({
   email: yup
     .string()
-    .required('아이디를 입력해주세요.')
-    .max(12, '아이디는 12자리 이하여야 합니다.')
-    .min(6, '아이디는 6자리 이상이어야 합니다.'),
-  password: yup
-    .string()
-    .required('비밀번호를 입력해주세요.')
-    .max(15, '비밀번호는 15자리 이하여야 합니다.')
-    .min(4, '비밀번호는 10자리 이상이어야 합니다.'),
+    .email('이메일 형식이 옳바르지 않습니다.')
+    .required('이메일을 입력해주세요.'),
+  password: yup.string().required('비밀번호를 입력해주세요.'),
 });
 
 export const commentValidation = yup.object().shape({
-  content: yup.string().required('코멘트를 입력해주세요.'),
+  content: yup
+    .string()
+    .required('코멘트를 입력해주세요.')
+    .max(300, '코멘트는 300자까지 작성가능합니다.'),
 });
