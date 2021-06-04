@@ -94,12 +94,12 @@ module.exports = {
         include: [
           {
             model: User,
-            attributes: ['id', 'nickname'],
+            attributes: ['id', 'nickname', 'avatar'],
           },
           {
             model: User,
             as: 'Marker',
-            attributes: ['id', 'nickname'],
+            attributes: ['id', 'nickname', 'avatar'],
           },
           {
             model: Image,
@@ -113,7 +113,7 @@ module.exports = {
             include: [
               {
                 model: User,
-                attributes: ['id', 'nickname'],
+                attributes: ['id', 'nickname', 'avatar'],
               },
               {
                 model: Comment,
@@ -121,11 +121,17 @@ module.exports = {
                 include: [
                   {
                     model: User,
-                    attributes: ['id', 'nickname'],
+                    attributes: ['id', 'nickname', 'avatar'],
                   },
                   {
                     model: Comment,
                     as: 'Reply',
+                    include: [
+                      {
+                        model: User,
+                        attributes: ['id', 'nickname', 'avatar'],
+                      },
+                    ],
                   },
                 ],
               },
