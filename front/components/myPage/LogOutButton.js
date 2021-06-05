@@ -20,8 +20,8 @@ const LogOutButton = () => {
     try {
       await Axios.post('/user/logout');
       setModalText('로그아웃하였습니다. 잠시 후 메인화면으로 이동합니다.');
-      mutate('/user');
       setTimeout(() => {
+        mutate('/user');
         setIsShowModal(false);
         router.push('/');
       }, 2000);
