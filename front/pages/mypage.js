@@ -21,7 +21,6 @@ import axios from 'axios';
 import styled from 'styled-components';
 import AppLayout from '../components/layouts/AppLayout';
 import PostWriteButton from '../components/PostWriteButton';
-import { generateDummyMyData } from '../util/dummy';
 import fetcher from '../util/fetcher';
 
 import { editMyUserDataValidation } from '../util/validation/yup';
@@ -51,7 +50,7 @@ const notEditing = {
 };
 
 const MyPage = () => {
-  const { data: userData, revalidate } = useSWR('/user', fetcher);
+  const { data: userData, revalidate, mutate } = useSWR('/user', fetcher);
 
   const [isLoadingPatch, setIsLoadingPatch] = useState(false);
   const [isFailedPatch, setIsFailedPatch] = useState(false);
@@ -63,7 +62,6 @@ const MyPage = () => {
       revalidate();
     }
   };
-  console.log(userData);
 
   const {
     control,
@@ -74,21 +72,22 @@ const MyPage = () => {
     mode: 'onBlur',
   });
 
-  const onSubmit = handleSubmit(async data => {
-    console.log(data);
-    // console.log(errors);
+  const onSubmit = handleSubmit(async editData => {
     setIsFailedPatch(false);
     setIsLoadingPatch(true);
-    const result = await axios.patch('/user', data);
-    setIsLoadingPatch(false);
-    console.log(result);
-    if (result.statusText === 'Created') {
-      message.success('성공적으로 수정되었습니다.');
+
+    try {
+      mutate({ ...userData, ...editData }, false);
+      await axios.patch('/user', editData);
+      revalidate();
       setArrayOfEditing({ ...notEditing });
-      await revalidate();
-    } else {
+      message.success('성공적으로 수정되었습니다.');
+    } catch (error) {
       message.error('수정에 실패하였습니다. 다시 시도해 주세요.');
+      message.error(`${error.response.data}`);
       setIsFailedPatch(true);
+    } finally {
+      setIsLoadingPatch(false);
     }
   });
 
@@ -102,14 +101,6 @@ const MyPage = () => {
 
   return (
     <>
-      <PostWriteButton
-        styled={{
-          backgroundColor: '#39c5bb',
-          position: 'absolute',
-          left: '5vw',
-          bottom: '5vh',
-        }}
-      />
       <AppLayout>
         <Row justify="center">
           <Col>
@@ -288,8 +279,8 @@ const MyPage = () => {
                       isLoadingPatch
                         ? 'Saving'
                         : isFailedPatch
-                        ? '실패'
-                        : 'save'
+                        ? 'Retry, '
+                        : 'SAVE'
                     }  `}
                   </Button>
                 </Affix>
