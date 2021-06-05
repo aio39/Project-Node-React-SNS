@@ -55,7 +55,7 @@ export const editMyUserDataValidation = yup.object().shape({
     .max(15, '비밀번호는 20자리 이하여야 합니다.')
     .min(4, '비밀번호는 10자리 이상이어야 합니다.')
     .when('oldPassword', {
-      is: password => password.length > 0,
+      is: password => password?.length > 0,
       then: yup.string().required('비밀번호를 입력해주세요.'),
     }),
   newPasswordEqual: yup
