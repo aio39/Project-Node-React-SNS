@@ -1,5 +1,15 @@
 import { FormOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
-import { Affix, Avatar, Button, Col, Divider, Input, Row, Upload } from 'antd';
+import {
+  Affix,
+  Avatar,
+  Button,
+  Col,
+  Divider,
+  Input,
+  message,
+  Row,
+  Upload,
+} from 'antd';
 import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
 import React, { useState } from 'react';
@@ -8,12 +18,27 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import Form from 'antd/lib/form/Form';
 import axios from 'axios';
+import styled from 'styled-components';
 import AppLayout from '../components/layouts/AppLayout';
 import PostWriteButton from '../components/PostWriteButton';
 import { generateDummyMyData } from '../util/dummy';
 import fetcher from '../util/fetcher';
 
-import { loginValidation } from '../util/validation/yup';
+import { editMyUserDataValidation } from '../util/validation/yup';
+import FormErrorMessage from '../components/FormErrorMessage';
+
+const StyledSignUpForm = styled(Form)`
+  .ant-col > {
+    div:not(:first-child) {
+      margin-top: 30px;
+    }
+
+    div {
+      position: relative;
+      padding-bottom: 8px;
+    }
+  }
+`;
 
 function isAnyEditing(obj) {
   return Object.values(obj).includes(true);
@@ -42,10 +67,10 @@ const MyPage = () => {
 
   const {
     control,
-    // formState: { errors },
+    formState: { errors },
     handleSubmit,
   } = useForm({
-    // resolver: yupResolver(loginValidation),
+    resolver: yupResolver(editMyUserDataValidation),
     mode: 'onBlur',
   });
 
@@ -58,12 +83,11 @@ const MyPage = () => {
     setIsLoadingPatch(false);
     console.log(result);
     if (result.statusText === 'Created') {
-      console.log('성공', result);
-      const res = await revalidate();
-      console.log(res);
+      message.success('성공적으로 수정되었습니다.');
       setArrayOfEditing({ ...notEditing });
+      await revalidate();
     } else {
-      console.log('실패', result);
+      message.error('수정에 실패하였습니다. 다시 시도해 주세요.');
       setIsFailedPatch(true);
     }
   });
@@ -111,94 +135,141 @@ const MyPage = () => {
               <Button icon={<UploadOutlined />} />
             </Upload>
           </Col>
-          <Form onFinish={onSubmit} size="large">
+          <StyledSignUpForm onFinish={onSubmit} size="large">
             <Col xl={8} sm={24}>
-              <Controller
-                name="nickname"
-                type="text"
-                control={control}
-                defaultValue={userData.nickname}
-                render={({ field }) => (
-                  <Input
-                    disabled={!arrayOfEditing.nickname}
-                    prefix={
-                      <>
-                        <Text>이름</Text> <Divider type="vertical" />
-                      </>
-                    }
-                    suffix={
-                      <Button
-                        shape="circle"
-                        onClick={handleIsEditingChange}
-                        icon={<FormOutlined />}
-                        data-key="nickname"
-                      />
-                    }
-                    {...field}
-                  />
-                )}
-              />
-
-              <Controller
-                name="oldPassword"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    type="password"
-                    placeholder="현재 비밀번호를 입력해주세요"
-                    disabled={!arrayOfEditing.password}
-                    prefix={
-                      <Divider>
-                        <Text>비밀번호</Text> <Divider type="vertical" />
-                      </Divider>
-                    }
-                    suffix={
-                      <Button
-                        shape="circle"
-                        onClick={handleIsEditingChange}
-                        icon={<FormOutlined />}
-                        data-key="password"
-                      />
-                    }
-                    {...field}
-                  />
-                )}
-              />
+              <div>
+                <Controller
+                  name="nickname"
+                  type="text"
+                  control={control}
+                  defaultValue={userData.nickname}
+                  render={({ field }) => (
+                    <Input
+                      disabled={!arrayOfEditing.nickname}
+                      prefix={
+                        <>
+                          <Text>이름</Text> <Divider type="vertical" />
+                        </>
+                      }
+                      suffix={
+                        <Button
+                          shape="circle"
+                          onClick={handleIsEditingChange}
+                          icon={<FormOutlined />}
+                          data-key="nickname"
+                        />
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+              {errors.nickname && (
+                <FormErrorMessage errorMessage={errors.nickname.message} />
+              )}
+              <div>
+                <Controller
+                  name="description"
+                  control={control}
+                  defaultValue={userData.description}
+                  render={({ field }) => (
+                    <Input
+                      disabled={!arrayOfEditing.description}
+                      prefix={
+                        <>
+                          <Text>설명</Text> <Divider type="vertical" />
+                        </>
+                      }
+                      suffix={
+                        <Button
+                          shape="circle"
+                          onClick={handleIsEditingChange}
+                          icon={<FormOutlined />}
+                          data-key="description"
+                        />
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+              <div>
+                <Controller
+                  name="oldPassword"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      type="password"
+                      placeholder="현재 비밀번호를 입력해주세요"
+                      disabled={!arrayOfEditing.password}
+                      prefix={
+                        <Divider>
+                          <Text>비밀번호</Text> <Divider type="vertical" />
+                        </Divider>
+                      }
+                      suffix={
+                        <Button
+                          shape="circle"
+                          onClick={handleIsEditingChange}
+                          icon={<FormOutlined />}
+                          data-key="password"
+                        />
+                      }
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
               {arrayOfEditing.password && (
                 <>
-                  <Controller
-                    name="newPassword"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        type="password"
-                        placeholder="새로운 비밀번호를 입력해주세요."
-                        prefix={
-                          <>
-                            <Text>새 비밀번호</Text> <Divider type="vertical" />
-                          </>
-                        }
-                        {...field}
+                  <div>
+                    <Controller
+                      name="newPassword"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          type="password"
+                          placeholder="새로운 비밀번호를 입력해주세요."
+                          prefix={
+                            <>
+                              <Text>새 비밀번호</Text>{' '}
+                              <Divider type="vertical" />
+                            </>
+                          }
+                          {...field}
+                        />
+                      )}
+                    />
+                    {errors.newPassword && (
+                      <FormErrorMessage
+                        errorMessage={errors.newPassword.message}
                       />
                     )}
-                  />
-                  <Controller
-                    name="newPasswordEqual"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        type="password"
-                        placeholder="새로운 비밀번호를 한번더 입력해주세요."
-                        prefix={
-                          <>
-                            <Text>비밀번호 확인</Text>{' '}
-                            <Divider type="vertical" />
-                          </>
-                        }
-                        {...field}
+                  </div>
+                  <div>
+                    <Controller
+                      name="newPasswordEqual"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          type="password"
+                          placeholder="새로운 비밀번호를 한번더 입력해주세요."
+                          prefix={
+                            <>
+                              <Text>비밀번호 확인</Text>{' '}
+                              <Divider type="vertical" />
+                            </>
+                          }
+                          {...field}
+                        />
+                      )}
+                    />
+                    {errors.newPasswordEqual && (
+                      <FormErrorMessage
+                        errorMessage={errors.newPasswordEqual.message}
                       />
                     )}
-                  />
+                  </div>
                 </>
               )}
               {isAnyEditing(arrayOfEditing) ? (
@@ -224,7 +295,7 @@ const MyPage = () => {
                 </Affix>
               ) : null}
             </Col>
-          </Form>
+          </StyledSignUpForm>
         </Row>
         <Row>
           <Col>
