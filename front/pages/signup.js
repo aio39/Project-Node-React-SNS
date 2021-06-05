@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
-import { Button, Checkbox, Form, Input, notification } from 'antd';
+import { Button, Checkbox, Col, Form, Input, notification, Row } from 'antd';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
@@ -12,6 +12,7 @@ import { SmileOutlined } from '@ant-design/icons';
 import AppLayout from '../components/layouts/AppLayout';
 import FormErrorMessage from '../components/FormErrorMessage';
 import { signUpValidation } from '../util/validation/yup';
+import ResponsiveLayout from '../components/layouts/ResposiveLayoutA';
 
 const StyledSignUpForm = styled(Form)`
   > div:not(:first-child) {
@@ -69,94 +70,98 @@ const SignUp = () => {
       <Head>
         <title>회원 가입</title>
       </Head>
-      <StyledSignUpForm onFinish={onSubmit} size="large">
-        <div>
-          <label htmlFor="email">아이디</label>
-          <Controller
-            name="email"
-            type="email"
-            control={control}
-            defaultValue=""
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.email && (
-            <FormErrorMessage errorMessage={errors.email.message} />
-          )}
-        </div>
-        <div>
-          <label htmlFor="nickname">닉네임</label>
-          <Controller
-            type="text"
-            name="nickname"
-            control={control}
-            placeholder="닉네임을 입력해주세요."
-            defaultValue=""
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.nickname && (
-            <FormErrorMessage errorMessage={errors.nickname.message} />
-          )}
-        </div>
-        <div>
-          <label htmlFor="password">비밀번호</label>
-          <Controller
-            render={({ field }) => <Input.Password {...field} />}
-            type="password"
-            name="password"
-            control={control}
-            placeholder="비밀번호를 입력해주세요."
-            defaultValue=""
-          />
-          {errors.password && (
-            <FormErrorMessage errorMessage={errors.password.message} />
-          )}
-        </div>
-        <div>
-          <label htmlFor="password2">비밀번호</label>
-          <Controller
-            render={({ field }) => <Input.Password {...field} />}
-            type="password"
-            name="password2"
-            control={control}
-            placeholder="비밀번호를 확인해주세요."
-            defaultValue=""
-          />
-          {errors.password2 && (
-            <FormErrorMessage errorMessage={errors.password2.message} />
-          )}
-        </div>
-        <div>
-          <Controller
-            name="term"
-            control={control}
-            defaultValue={false}
-            render={({ field }) => (
-              <Checkbox
-                {...field}
-                onChange={e => field.onChange(!e.target.value)}
-                checked={field.value}
-              >
-                약관에 동의합니다.
-              </Checkbox>
+      <ResponsiveLayout>
+        <StyledSignUpForm onFinish={onSubmit} size="large">
+          <div>
+            <label htmlFor="email">아이디</label>
+            <Controller
+              name="email"
+              type="email"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.email && (
+              <FormErrorMessage errorMessage={errors.email.message} />
             )}
-          />
-          {errors.term && (
-            <FormErrorMessage errorMessage={errors.term.message} />
-          )}
-        </div>
-        <div>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={isLoadingPostSingUp}
-            block
-          >
-            가입하기
-          </Button>
+          </div>
+          <div>
+            <label htmlFor="nickname">닉네임</label>
+            <Controller
+              type="text"
+              name="nickname"
+              control={control}
+              placeholder="닉네임을 입력해주세요."
+              defaultValue=""
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.nickname && (
+              <FormErrorMessage errorMessage={errors.nickname.message} />
+            )}
+          </div>
+          <div>
+            <label htmlFor="password">비밀번호</label>
+            <Controller
+              render={({ field }) => <Input.Password {...field} />}
+              type="password"
+              name="password"
+              control={control}
+              placeholder="비밀번호를 입력해주세요."
+              defaultValue=""
+            />
+            {errors.password && (
+              <FormErrorMessage errorMessage={errors.password.message} />
+            )}
+          </div>
+          <div>
+            <label htmlFor="password2">비밀번호</label>
+            <Controller
+              render={({ field }) => <Input.Password {...field} />}
+              type="password"
+              name="password2"
+              control={control}
+              placeholder="비밀번호를 확인해주세요."
+              defaultValue=""
+            />
+            {errors.password2 && (
+              <FormErrorMessage errorMessage={errors.password2.message} />
+            )}
+          </div>
+          <div>
+            <Controller
+              name="term"
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox
+                  {...field}
+                  onChange={e => field.onChange(!e.target.value)}
+                  checked={field.value}
+                >
+                  약관에 동의합니다.
+                </Checkbox>
+              )}
+            />
+            {errors.term && (
+              <FormErrorMessage errorMessage={errors.term.message} />
+            )}
+          </div>
+          <div>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isLoadingPostSingUp}
+              block
+            >
+              가입하기
+            </Button>
 
-          {isFailedPost ? <Title> 가입 실패, 다시 시도해주세요.</Title> : null}
-        </div>
-      </StyledSignUpForm>
+            {isFailedPost ? (
+              <Title> 가입 실패, 다시 시도해주세요.</Title>
+            ) : null}
+          </div>
+        </StyledSignUpForm>
+      </ResponsiveLayout>
     </AppLayout>
   );
 };

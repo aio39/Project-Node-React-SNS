@@ -12,6 +12,7 @@ import AppLayout from '../components/layouts/AppLayout';
 import FormErrorMessage from '../components/FormErrorMessage';
 import fetcher from '../util/fetcher';
 import { loginValidation } from '../util/validation/yup';
+import ResponsiveLayout from '../components/layouts/ResposiveLayoutA';
 
 const StyledSignUpForm = styled(Form)`
   > div:not(:first-child) {
@@ -70,49 +71,51 @@ const Login = () => {
       <Head>
         <title>로그인</title>
       </Head>
-      <StyledSignUpForm onFinish={onSubmit} size="large">
-        <div>
-          <label htmlFor="email">Email</label>
-          <Controller
-            name="email"
-            type="email"
-            control={control}
-            defaultValue=""
-            render={({ field }) => <Input {...field} />}
-          />
-          {errors.email && (
-            <FormErrorMessage errorMessage={errors.email.message} />
-          )}
-        </div>
+      <ResponsiveLayout>
+        <StyledSignUpForm onFinish={onSubmit} size="large">
+          <div>
+            <label htmlFor="email">Email</label>
+            <Controller
+              name="email"
+              type="email"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <Input {...field} />}
+            />
+            {errors.email && (
+              <FormErrorMessage errorMessage={errors.email.message} />
+            )}
+          </div>
 
-        <div>
-          <label htmlFor="password">비밀번호</label>
-          <Controller
-            render={({ field }) => <Input.Password {...field} />}
-            type="password"
-            name="password"
-            control={control}
-            placeholder="비밀번호를 입력해주세요."
-            defaultValue=""
-          />
-          {errors.password && (
-            <FormErrorMessage errorMessage={errors.password.message} />
-          )}
-        </div>
+          <div>
+            <label htmlFor="password">비밀번호</label>
+            <Controller
+              render={({ field }) => <Input.Password {...field} />}
+              type="password"
+              name="password"
+              control={control}
+              placeholder="비밀번호를 입력해주세요."
+              defaultValue=""
+            />
+            {errors.password && (
+              <FormErrorMessage errorMessage={errors.password.message} />
+            )}
+          </div>
 
-        <div>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={isLoadingPostSingUp}
-            block
-          >
-            로그인
-          </Button>
+          <div>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isLoadingPostSingUp}
+              block
+            >
+              로그인
+            </Button>
 
-          {isFailedPost ? <Title> 로그인 실패</Title> : null}
-        </div>
-      </StyledSignUpForm>
+            {isFailedPost ? <Title> 로그인 실패</Title> : null}
+          </div>
+        </StyledSignUpForm>
+      </ResponsiveLayout>
     </AppLayout>
   );
 };
