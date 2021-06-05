@@ -114,6 +114,7 @@ userRouter.post(
 userRouter.post('/logout', isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
+  res.clearCookie('connect.sid');
   res.send('ok');
 });
 
