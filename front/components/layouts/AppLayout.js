@@ -107,8 +107,17 @@ const AppLayout = ({ children }) => {
             alignItems: 'center',
           }}
         >
-          <div className="logo" />
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[current]}>
+          <Menu
+            theme="dark"
+            // mode="horizontal"
+            mode="inline"
+            defaultSelectedKeys={[current]}
+            inlineCollapsed={false}
+            style={{
+              flex: '1 1 auto',
+              display: 'flex',
+            }}
+          >
             <Menu.Item key="home" icon={<HomeOutlined />}>
               <Link href="/">
                 <a>메인</a>

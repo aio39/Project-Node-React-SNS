@@ -35,7 +35,7 @@ const LogOutButton = () => {
 
   return (
     <>
-      <Button type="primary" onClick={handelShowModal}>
+      <Button type="primary" onClick={handelShowModal} size="large">
         로그아웃
       </Button>
       <Modal
