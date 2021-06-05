@@ -15,11 +15,6 @@ import fetcher from '../util/fetcher';
 
 import { loginValidation } from '../util/validation/yup';
 
-const fakeFecther = url =>
-  new Promise(resolve => {
-    const data = generateDummyMyData();
-    setTimeout(() => resolve(data), 2000);
-  });
 function isAnyEditing(obj) {
   return Object.values(obj).includes(true);
 }
