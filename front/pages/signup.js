@@ -134,6 +134,7 @@ const SignUp = () => {
               <Checkbox
                 {...field}
                 onChange={e => field.onChange(!e.target.value)}
+                checked={field.value}
               >
                 약관에 동의합니다.
               </Checkbox>
