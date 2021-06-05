@@ -68,9 +68,9 @@ const MyPage = () => {
     }
   });
 
-  const handleNameChange = e => {
-    console.log(e);
-    setArrayOfEditing(p => ({ ...p, nickname: !p.nickname }));
+  const handleIsEditingChange = e => {
+    const { key } = e.currentTarget.dataset;
+    setArrayOfEditing(p => ({ ...p, [key]: !p[key] }));
     return null;
   };
 
@@ -129,8 +129,9 @@ const MyPage = () => {
                     suffix={
                       <Button
                         shape="circle"
-                        onClick={handleNameChange}
+                        onClick={handleIsEditingChange}
                         icon={<FormOutlined />}
+                        data-key="nickname"
                       />
                     }
                     {...field}
@@ -138,6 +139,68 @@ const MyPage = () => {
                 )}
               />
 
+              <Controller
+                name="oldPassword"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    type="password"
+                    placeholder="현재 비밀번호를 입력해주세요"
+                    disabled={!arrayOfEditing.password}
+                    prefix={
+                      <Divider>
+                        <Text>비밀번호</Text> <Divider type="vertical" />
+                      </Divider>
+                    }
+                    suffix={
+                      <Button
+                        shape="circle"
+                        onClick={handleIsEditingChange}
+                        icon={<FormOutlined />}
+                        data-key="password"
+                      />
+                    }
+                    {...field}
+                  />
+                )}
+              />
+              {arrayOfEditing.password && (
+                <>
+                  <Controller
+                    name="newPassword"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="password"
+                        placeholder="새로운 비밀번호를 입력해주세요."
+                        prefix={
+                          <>
+                            <Text>새 비밀번호</Text> <Divider type="vertical" />
+                          </>
+                        }
+                        {...field}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="newPasswordEqual"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="password"
+                        placeholder="새로운 비밀번호를 한번더 입력해주세요."
+                        prefix={
+                          <>
+                            <Text>비밀번호 확인</Text>{' '}
+                            <Divider type="vertical" />
+                          </>
+                        }
+                        {...field}
+                      />
+                    )}
+                  />
+                </>
+              )}
               {isAnyEditing(arrayOfEditing) ? (
                 <Affix
                   target={() => window}
