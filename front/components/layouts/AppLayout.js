@@ -14,6 +14,7 @@ import useSWR from 'swr';
 import Search from 'antd/lib/input/Search';
 import Axios from 'axios';
 import fetcher from '../../util/fetcher';
+import LogOutButton from '../myPage/LogOutButton';
 
 const { Header, Content, Footer } = Layout;
 
@@ -151,6 +152,7 @@ const AppLayout = ({ children }) => {
           >
             <Input.Search size="large" placeholder="input here" enterButton />
           </AutoComplete>
+          {userData && <LogOutButton />}
         </Header>
         <Content>
           <div style={siteLayout}>{children}</div>
