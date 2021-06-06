@@ -1,10 +1,14 @@
 import { List, Avatar } from 'antd';
+import Text from 'antd/lib/typography/Text';
+import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useSWRInfinite } from 'swr';
+import useMediaQuery from 'use-media-antd-query';
 
 const PostList = ({ path, userId }) => {
   const [showSkeleton, setShowSkeleton] = useState(false);
+  const colSize = useMediaQuery();
   const fetcher = url => {
     setShowSkeleton(true);
     return axios.get(url).then(result => {
@@ -12,6 +16,21 @@ const PostList = ({ path, userId }) => {
       setShowSkeleton(false);
       return result.data;
     });
+  };
+
+  const imageSize = colSize => {
+    switch (colSize) {
+      case 'xxl':
+      case 'xl':
+        return { width: '180px', height: '120px' };
+      case 'lg':
+      case 'md':
+      case 'sm':
+        return { width: '120px', height: '80px' };
+      case 'xs':
+      default:
+        return { width: '120px', height: '80px' };
+    }
   };
 
   const {
@@ -46,19 +65,31 @@ const PostList = ({ path, userId }) => {
       dataSource={postsDataArray.flat()}
       renderItem={post => (
         <List.Item
+          style={{
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            marginBottom: '10px',
+            padding: '0px',
+          }}
           key={post.id}
           extra={
             <img
+              style={{ ...imageSize(colSize), margin: '0px 15px 0px 0px' }}
               alt="logo"
-              src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+              src={
+                post.Images.length > 0 ? post.Images[0].src : '/not_image.png'
+              }
             />
           }
         >
           <List.Item.Meta
+            style={{
+              overflow: 'hidden',
+            }}
             avatar={<Avatar src={post.User?.avatar || '/not_avatar.jpg'} />}
-            title={<a>{post.title}</a>}
+            title={<Text>{post.User.nickname}</Text>}
           />
-          {post.title}
+          <Title level={3}>{post.title}</Title>
         </List.Item>
       )}
     />

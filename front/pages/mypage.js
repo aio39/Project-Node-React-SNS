@@ -296,16 +296,16 @@ const MyPage = () => {
           </StyledSignUpForm>
         </Row>
         <Row>
-          <Col lg={8} md={12} xs={24}>
+          <Col xl={8} md={12} xs={24}>
             <Divider orientation="left">북마크</Divider>
           </Col>
 
-          <Col lg={8} md={12} xs={24}>
+          <Col xl={8} md={12} xs={24}>
             <Divider orientation="left">나의 포스터</Divider>
             <PostList path="posts" userId={userData.id} />
           </Col>
 
-          <Col lg={8} md={12} xs={24}>
+          <Col xl={8} md={12} xs={24}>
             <Divider orientation="left">임시 저장</Divider>
           </Col>
         </Row>
