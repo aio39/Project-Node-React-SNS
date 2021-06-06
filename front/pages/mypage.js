@@ -25,6 +25,7 @@ import fetcher from '../util/fetcher';
 
 import { editMyUserDataValidation } from '../util/validation/yup';
 import FormErrorMessage from '../components/FormErrorMessage';
+import PostList from '../components/myPage/PostList';
 
 const StyledSignUpForm = styled(Form)`
   .ant-col > {
@@ -55,7 +56,6 @@ const MyPage = () => {
   const [isLoadingPatch, setIsLoadingPatch] = useState(false);
   const [isFailedPatch, setIsFailedPatch] = useState(false);
   const [arrayOfEditing, setArrayOfEditing] = useState(notEditing);
-
   const uploadOnchange = ({ file }) => {
     if (file.status === 'done') {
       console.log('업로드!');
@@ -266,7 +266,14 @@ const MyPage = () => {
               {isAnyEditing(arrayOfEditing) ? (
                 <Affix
                   target={() => window}
-                  style={{ position: 'fixed', bottom: '20px' }}
+                  style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    left: 0,
+                    right: 0,
+                    margin: 'auto',
+                    width: '200px',
+                  }}
                 >
                   <Button
                     block
@@ -289,17 +296,18 @@ const MyPage = () => {
           </StyledSignUpForm>
         </Row>
         <Row>
-          <Col>
+          <Col lg={8} md={12} xs={24}>
             <Divider orientation="left">북마크</Divider>
           </Col>
-        </Row>
-        <Row>
-          <Col>
+
+          <Col lg={8} md={12} xs={24}>
             <Divider orientation="left">나의 포스터</Divider>
+            <PostList path="posts" userId={userData.id} />
           </Col>
-        </Row>
-        <Row>
-          <Divider orientation="left">임시 저장</Divider>
+
+          <Col lg={8} md={12} xs={24}>
+            <Divider orientation="left">임시 저장</Divider>
+          </Col>
         </Row>
       </AppLayout>
     </>
