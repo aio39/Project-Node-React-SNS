@@ -2,7 +2,8 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
-const { User } = require('../models');
+const { Op } = require('sequelize');
+const { User, Post, Image } = require('../models');
 const { isNotLoggedIn, isLoggedIn } = require('../utils/checkLoginMiddleware');
 const { avatarImageUpload } = require('../utils/multer');
 
@@ -95,8 +96,39 @@ userRouter.patch('/', async (req, res, next) => {
   }
 });
 
-userRouter.get('/userId');
-userRouter.get('/userId/posts');
+userRouter.get('/:userId');
+userRouter.get('/:userId/posts', async (req, res, next) => {
+  try {
+    const { id: UserId } = req.user;
+    const where = {
+      UserId,
+    };
+    if (parseInt(req.query.lastId, 10)) {
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
+
+    const posts = await Post.findAll({
+      where,
+      limit: 6,
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: ['nickname', 'avatar'],
+        },
+        {
+          model: Image,
+        },
+      ],
+    });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+userRouter.get('/:userId/bookmarks');
+userRouter.get('/:userId/temp');
 
 userRouter.post(
   '/avatar',
