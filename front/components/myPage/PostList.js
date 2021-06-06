@@ -2,6 +2,7 @@ import { List, Avatar } from 'antd';
 import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { useSWRInfinite } from 'swr';
 import useMediaQuery from 'use-media-antd-query';
@@ -64,33 +65,35 @@ const PostList = ({ path, userId }) => {
       loading={false}
       dataSource={postsDataArray.flat()}
       renderItem={post => (
-        <List.Item
-          style={{
-            display: 'flex',
-            flexDirection: 'row-reverse',
-            marginBottom: '10px',
-            padding: '0px',
-          }}
-          key={post.id}
-          extra={
-            <img
-              style={{ ...imageSize(colSize), margin: '0px 15px 0px 0px' }}
-              alt="logo"
-              src={
-                post.Images.length > 0 ? post.Images[0].src : '/not_image.png'
-              }
-            />
-          }
-        >
-          <List.Item.Meta
+        <Link href={`/post/${post.id}/`}>
+          <List.Item
             style={{
-              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'row-reverse',
+              marginBottom: '10px',
+              padding: '0px',
             }}
-            avatar={<Avatar src={post.User?.avatar || '/not_avatar.jpg'} />}
-            title={<Text>{post.User.nickname}</Text>}
-          />
-          <Title level={3}>{post.title}</Title>
-        </List.Item>
+            key={post.id}
+            extra={
+              <img
+                style={{ ...imageSize(colSize), margin: '0px 15px 0px 0px' }}
+                alt="logo"
+                src={
+                  post.Images.length > 0 ? post.Images[0].src : '/not_image.png'
+                }
+              />
+            }
+          >
+            <List.Item.Meta
+              style={{
+                overflow: 'hidden',
+              }}
+              avatar={<Avatar src={post.User?.avatar || '/not_avatar.jpg'} />}
+              title={<Text>{post.User.nickname}</Text>}
+            />
+            <Title level={3}>{post.title}</Title>
+          </List.Item>
+        </Link>
       )}
     />
   );
