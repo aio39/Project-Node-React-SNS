@@ -9,6 +9,7 @@ import Title from 'antd/lib/typography/Title';
 import AppLayout from '../../components/layouts/AppLayout';
 import PostComment from '../../components/PostComment';
 import CommentTextArea from '../../components/CommentTextArea';
+import PostDeleteBtn from '../../components/button/PostDeleteBtn';
 
 const fetcher = async url => {
   const result = await Axios.get(url);
@@ -28,6 +29,7 @@ const Post = () => {
   const URL = `/post/${postid}`;
 
   const { data: postData, errors: postError } = useSWR(URL, fetcher);
+  const { data: userData } = useSWR('/user', fetcher);
   const [replyTurnOn, setReplyTurnOn] = useState(false);
   const onClickReply = useCallback(() => {
     setReplyTurnOn(!replyTurnOn);
@@ -58,7 +60,12 @@ const Post = () => {
               />
             </ImageWrapper>
           ))}
-          <Title>{postData.title}</Title>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Title>{postData.title}</Title>
+            {userData?.id === postData.UserId && (
+              <PostDeleteBtn postId={postData.id} />
+            )}
+          </div>
           <Paragraph>{postData.content}</Paragraph>
         </Col>
         <Col style={{ maxHeight: '100%' }} xs={24} md={24} xl={6}>
