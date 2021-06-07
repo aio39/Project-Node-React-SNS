@@ -28,15 +28,13 @@ import FormErrorMessage from '../components/FormErrorMessage';
 import PostList from '../components/myPage/PostList';
 
 const StyledSignUpForm = styled(Form)`
-  .ant-col > {
-    div:not(:first-child) {
-      margin-top: 30px;
-    }
+  .input-div :not(:first-child) {
+    margin-top: 30px;
+  }
 
-    div {
-      position: relative;
-      padding-bottom: 8px;
-    }
+  .input-div {
+    position: relative;
+    padding-bottom: 8px;
   }
 `;
 
@@ -109,26 +107,42 @@ const MyPage = () => {
         </Row>
 
         <Row align="top" justify="center">
-          <Col xl={8} sm={24}>
-            <Avatar
-              size={64}
-              src={userData?.avatar || '/not_avatar.jpg'}
-              icon={<UserOutlined />}
-            />
-            <Upload
-              name="image"
-              withCredentials="true"
-              action="http://localhost:3005/user/avatar"
-              onChange={uploadOnchange}
-              showUploadList={false}
-              maxCount={1}
+          <Col xl={8} md={12} xs={24}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'relative',
+                height: '200px',
+              }}
             >
-              <Button icon={<UploadOutlined />} />
-            </Upload>
+              <Avatar
+                size={64}
+                src={userData?.avatar || '/not_avatar.jpg'}
+                icon={<UserOutlined />}
+                style={{
+                  width: '200px',
+                  height: '200px',
+                  position: 'absolute',
+                }}
+              />
+              <Upload
+                name="image"
+                withCredentials="true"
+                action="http://localhost:3005/user/avatar"
+                onChange={uploadOnchange}
+                showUploadList={false}
+                maxCount={1}
+                style={{ position: 'absolute' }}
+              >
+                <Button icon={<UploadOutlined />} />
+              </Upload>
+            </div>
           </Col>
-          <StyledSignUpForm onFinish={onSubmit} size="large">
-            <Col xl={8} sm={24}>
-              <div>
+          <Col xl={8} md={12} xs={24} style={{ maxWidth: '100%' }}>
+            <StyledSignUpForm onFinish={onSubmit} size="large">
+              <div className="input-div">
                 <Controller
                   name="nickname"
                   type="text"
@@ -158,7 +172,7 @@ const MyPage = () => {
               {errors.nickname && (
                 <FormErrorMessage errorMessage={errors.nickname.message} />
               )}
-              <div>
+              <div className="input-div">
                 <Controller
                   name="description"
                   control={control}
@@ -184,7 +198,7 @@ const MyPage = () => {
                   )}
                 />
               </div>
-              <div>
+              <div className="input-div">
                 <Controller
                   name="oldPassword"
                   control={control}
@@ -292,8 +306,8 @@ const MyPage = () => {
                   </Button>
                 </Affix>
               ) : null}
-            </Col>
-          </StyledSignUpForm>
+            </StyledSignUpForm>
+          </Col>
         </Row>
         <Row>
           <Col xl={8} md={12} xs={24}>
