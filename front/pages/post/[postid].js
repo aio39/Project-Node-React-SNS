@@ -9,7 +9,7 @@ import Title from 'antd/lib/typography/Title';
 import AppLayout from '../../components/layouts/AppLayout';
 import PostComment from '../../components/PostComment';
 import CommentTextArea from '../../components/CommentTextArea';
-import PostDeleteBtn from '../../components/button/PostDeleteBtn';
+import DeleteBtn from '../../components/button/DeleteBtn';
 
 const fetcher = async url => {
   const result = await Axios.get(url);
@@ -63,7 +63,7 @@ const Post = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Title>{postData.title}</Title>
             {userData?.id === postData.UserId && (
-              <PostDeleteBtn
+              <DeleteBtn
                 requestObj={{
                   target: '게시물',
                   kind: 'post',

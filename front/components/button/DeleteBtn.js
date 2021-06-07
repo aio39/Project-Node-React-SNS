@@ -4,6 +4,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
+import { mutate } from 'swr';
 
 const DeleteModal = styled(Modal)`
   ${props =>
@@ -51,6 +52,7 @@ const DeleteBtn = ({ requestObj }) => {
         if (requestObj.goMain) {
           router.push('/');
         } else {
+          mutate(`/post/${requestObj.postId}`);
           setVisible(false);
         }
       }, 2000);

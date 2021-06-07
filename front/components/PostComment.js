@@ -2,8 +2,9 @@ import { Avatar, Comment } from 'antd';
 import React, { useCallback, useState } from 'react';
 
 import Axios from 'axios';
+import styled from 'styled-components';
 import CommentTextArea from './CommentTextArea';
-import DeleteBtn from './button/PostDeleteBtn';
+import DeleteBtn from './button/DeleteBtn';
 
 const PostComment = ({ comment, loginUserId }) => {
   const { User, Reply, PostId, id: CommentId, isDeleted } = comment;
@@ -23,14 +24,23 @@ const PostComment = ({ comment, loginUserId }) => {
       content={<p>{comment.content}</p>}
     >
       {User.id === loginUserId && !isDeleted ? (
-        <DeleteBtn
-          requestObj={{
-            target: '덧글',
-            kind: 'comment',
-            postId: PostId,
-            commentId: CommentId,
+        <div
+          style={{
+            position: 'absolute',
+            top: '20px',
+            right: '10px',
+            color: 'red',
           }}
-        />
+        >
+          <DeleteBtn
+            requestObj={{
+              target: '덧글',
+              kind: 'comment',
+              postId: PostId,
+              commentId: CommentId,
+            }}
+          />
+        </div>
       ) : null}
       {replyTurnOn ? (
         <CommentTextArea PostId={PostId} CommentId={CommentId} />
