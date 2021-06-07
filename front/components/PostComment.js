@@ -46,7 +46,11 @@ const PostComment = ({ comment, loginUserId }) => {
         <CommentTextArea PostId={PostId} CommentId={CommentId} />
       ) : null}
       {Reply?.map(comment => (
-        <PostComment comment={comment} loginUserId={loginUserId} />
+        <PostComment
+          key={comment.id}
+          comment={comment}
+          loginUserId={loginUserId}
+        />
       ))}
     </Comment>
   );

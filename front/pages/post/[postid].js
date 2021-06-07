@@ -79,7 +79,11 @@ const Post = () => {
           <Divider orientation="left">덧글</Divider>
           {postData.Comments.length > 0 ? (
             postData.Comments.map(comment => (
-              <PostComment comment={comment} loginUserId={userData.id} />
+              <PostComment
+                key={comment.id}
+                comment={comment}
+                loginUserId={userData.id}
+              />
             ))
           ) : (
             <>

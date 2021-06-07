@@ -35,7 +35,7 @@ const CommentTextArea = ({ PostId, CommentId, setRootReplyOn }) => {
     }
   });
 
-  if (comment) return <PostComment comment={comment} />;
+  if (comment) return <PostComment key={comment.id} comment={comment} />;
 
   return (
     <Form onFinish={onSubmit}>
