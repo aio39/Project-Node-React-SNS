@@ -35,7 +35,7 @@ const WritePage = () => {
     revalidate: postRevalidate,
   } = useSWR(isUpdate ? `/post/${router.query.postid}` : null, fetcher, {
     revalidateOnFocus: false,
-    revalidateOnMount: false,
+    revalidateOnMount: true,
     revalidateOnReconnect: false,
     onSuccess: postData => {
       console.log('swr 성공', postData);
@@ -71,11 +71,11 @@ const WritePage = () => {
     setIsLoadingPost(true);
     setIsFailedPost(false);
     data.image = imageURLArray;
-    data.deletedImage = deletedImagesId;
+    data.deletedImagesId = deletedImagesId;
     try {
       let result;
       if (isUpdate) {
-        result = await Axios.update(`/post/${postid}`, data);
+        result = await Axios.patch(`/post/${postid}`, data);
       } else {
         result = await Axios.post('/post', data);
       }
