@@ -22,6 +22,13 @@ const convertDeletedComments = comments => {
   });
 };
 
+const addImagesToPost = async (post, imageUrls) => {
+  const images = await Promise.all(
+    imageUrls.map(image => Image.create({ src: image })),
+  );
+  await post.addImages(images);
+};
+
 module.exports = {
   postPost: async (req, res, next) => {
     console.log(req);
@@ -40,15 +47,7 @@ module.exports = {
         await post.addHashtags(result.map(v => v[0]));
       }
       if (req.body.image?.length > 0) {
-        if (Array.isArray(req.body.image)) {
-          const images = await Promise.all(
-            req.body.image.map(image => Image.create({ src: image })),
-          );
-          await post.addImages(images);
-        } else {
-          const image = await Image.create({ src: req.body.image });
-          await post.addImages(image);
-        }
+        await addImagesToPost(post, req.body.image);
       }
       const fullPost = await Post.findOne({
         where: { id: post.id },
@@ -152,10 +151,12 @@ module.exports = {
     }
   },
   patchPost: async (req, res, next) => {
-    const [content, title] = req.body;
-    const body = [content, title].filter(String);
-
+    console.log(req.body);
+    const { content, title, image, deletedImagesId } = req.body;
+    const body = { content, title };
+    console.log(body);
     const hashtags = req.body.content.match(/#[^\s#]+/g);
+
     try {
       await Post.update(
         {
@@ -169,21 +170,32 @@ module.exports = {
       );
 
       const post = await Post.findOne({ where: { id: req.params.postId } });
-
-      if (hashtags) {
-        const result = await Promise.all(
-          hashtags.map(tag =>
-            Hashtag.findOrCreate({
-              where: { name: tag.slice(1).toLowerCase() },
-            }),
-          ),
-        );
-        await post.setHashtags(result.map(v => v[0]));
+      if (image?.length > 0) {
+        await addImagesToPost(post, req.body.image);
       }
 
+      if (deletedImagesId.length > 0) {
+        await Image.destroy({
+          where: {
+            id: {
+              [Op.or]: deletedImagesId,
+            },
+          },
+        });
+      }
+      // if (hashtags) {
+      //   const result = await Promise.all(
+      //     hashtags.map(tag =>
+      //       Hashtag.findOrCreate({
+      //         where: { name: tag.slice(1).toLowerCase() },
+      //       }),
+      //     ),
+      //   );
+      //   await post.setHashtags(result.map(v => v[0]));
+      // }
+
       res.status(200).json({
-        PostId: parseInt(req.params.postId, 10),
-        content: req.body.content,
+        id: parseInt(req.params.postId, 10),
       });
     } catch (error) {
       console.error(error);
