@@ -66,7 +66,9 @@ const DeleteBtn = ({ requestObj }) => {
 
   return (
     <>
-      <Button onClick={handleShowModal}>삭제</Button>
+      <Button danger type="primary" onClick={handleShowModal}>
+        삭제
+      </Button>
       <DeleteModal
         title={`${requestObj.target} 삭제하시겠습니까?`}
         visible={visible}

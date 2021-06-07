@@ -6,6 +6,7 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import styled from 'styled-components';
 import Axios from 'axios';
 import Title from 'antd/lib/typography/Title';
+import Link from 'next/link';
 import AppLayout from '../../components/layouts/AppLayout';
 import PostComment from '../../components/PostComment';
 import CommentTextArea from '../../components/CommentTextArea';
@@ -36,6 +37,10 @@ const Post = () => {
   }, []);
   console.log(postData);
 
+  const handleRouterPushUpdate = () => {
+    router.push(`/write?isupdate=true&postid=${postid}`);
+  };
+
   if (!postData) {
     return (
       <AppLayout>
@@ -49,6 +54,26 @@ const Post = () => {
     <AppLayout>
       <Row justify="center" align="top">
         <Col style={{ backgroundColor: '##CCCCCC' }} xs={24} md={24} xl={18}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Title>{postData.title}</Title>
+            {userData?.id === postData.UserId && (
+              <div>
+                <DeleteBtn
+                  requestObj={{
+                    target: '게시물',
+                    kind: 'post',
+                    postId: postData.id,
+                    goMain: true,
+                  }}
+                />
+                <Button type="primary">
+                  <Link href={`/write?isupdate=true&postid=${postid}`}>
+                    수정
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </div>
           {postData.Images?.map(image => (
             <ImageWrapper>
               <img
@@ -60,19 +85,6 @@ const Post = () => {
               />
             </ImageWrapper>
           ))}
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Title>{postData.title}</Title>
-            {userData?.id === postData.UserId && (
-              <DeleteBtn
-                requestObj={{
-                  target: '게시물',
-                  kind: 'post',
-                  postId: postData.id,
-                  goMain: true,
-                }}
-              />
-            )}
-          </div>
           <Paragraph>{postData.content}</Paragraph>
         </Col>
         <Col style={{ maxHeight: '100%' }} xs={24} md={24} xl={6}>
