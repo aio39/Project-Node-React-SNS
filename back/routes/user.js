@@ -6,6 +6,10 @@ const { Op } = require('sequelize');
 const { User, Post, Image } = require('../models');
 const { isNotLoggedIn, isLoggedIn } = require('../utils/checkLoginMiddleware');
 const { avatarImageUpload } = require('../utils/multer');
+const {
+  patchBookmarkToPost,
+  deleteBookmarkToPost,
+} = require('../controllers/user');
 
 const userRouter = express.Router();
 
@@ -127,7 +131,10 @@ userRouter.get('/:userId/posts', async (req, res, next) => {
     next(error);
   }
 });
-userRouter.get('/:userId/bookmarks');
+userRouter
+  .route('/:userId/bookmarks/:postId')
+  .patch(patchBookmarkToPost)
+  .delete(deleteBookmarkToPost);
 userRouter.get('/:userId/temp');
 
 userRouter.post(

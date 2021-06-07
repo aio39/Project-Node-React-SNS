@@ -27,9 +27,4 @@ postRouter.route('/:postId/comment').post(postCommentToPost);
 
 postRouter.route('/:postId/comment/:commentId').delete(deleteCommentToPost);
 
-postRouter
-  .route('/:postId/bookmark')
-  .patch(patchBookmarkToPost)
-  .delete(deleteBookmarkToPost);
-
 module.exports = postRouter;
