@@ -1,28 +1,52 @@
-import { Button, Form, Input, message, Upload } from 'antd';
+import { Button, Form, Input, List, message, Upload } from 'antd';
 import Title from 'antd/lib/skeleton/Title';
 import Head from 'next/head';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Controller, useForm } from 'react-hook-form';
 import TextArea from 'antd/lib/input/TextArea';
 import Axios from 'axios';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import Avatar from 'antd/lib/avatar/avatar';
 import FormErrorMessage from '../components/FormErrorMessage';
 import AppLayout from '../components/layouts/AppLayout';
 import fetcher from '../util/fetcher';
 
 const StyledPostForm = styled(Form)`
   > div:not(:first-child) {
-    margin-top: 30px; // ID 인풋박스만 제외하고
+    margin-top: 30px;
   }
 `;
 
 const WritePage = () => {
   const router = useRouter();
-
-  const { data: userData, error, revalidate } = useSWR('/user', fetcher);
+  const { isupdate, postid } = router.query;
+  const isUpdate = isupdate === 'true';
+  const {
+    data: userData,
+    error: userError,
+    revalidate: userRevalidate,
+  } = useSWR('/user', fetcher);
+  const {
+    data: postData,
+    error: postError,
+    revalidate: postRevalidate,
+  } = useSWR(isUpdate ? `/post/${router.query.postid}` : null, fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
+    revalidateOnReconnect: false,
+    onSuccess: postData => {
+      console.log('swr 성공', postData);
+      setBeforeImageURLArray([
+        ...postData.Images.map(image => ({
+          src: image.src,
+          id: image.id,
+        })),
+      ]);
+    },
+  });
   const {
     control,
     formState: { errors },
@@ -30,12 +54,12 @@ const WritePage = () => {
   } = useForm({
     mode: 'onBlur',
   });
-
   const [imageURLArray, setImageURLArray] = useState([]);
+  const [beforeImageURLArray, setBeforeImageURLArray] = useState([]);
 
   const [isLoadingPost, setIsLoadingPost] = useState(false);
   const [isFailedPost, setIsFailedPost] = useState(false);
-
+  const [deletedImagesId, setDeletedImagesId] = useState([]);
   const uploadOnchange = ({ file }) => {
     if (file.status === 'done') {
       setImageURLArray(p => [...p, file.response]);
@@ -47,24 +71,27 @@ const WritePage = () => {
     setIsLoadingPost(true);
     setIsFailedPost(false);
     data.image = imageURLArray;
-    const result = await Axios.post('/post', data);
-    setIsLoadingPost(false);
-    console.log(result);
-    if (result.statusText === 'Created') {
-      console.log('성공', result);
+    data.deletedImage = deletedImagesId;
+    try {
+      let result;
+      if (isUpdate) {
+        result = await Axios.update(`/post/${postid}`, data);
+      } else {
+        result = await Axios.post('/post', data);
+      }
+      setIsLoadingPost(false);
       message.success({
         content: '포스트 저장 성공! 포스트로 이동합니다.',
         key: 'A',
         duration: 2,
       });
-
       setTimeout(() => {
         router.push(`/post/${result.data.id}`);
       }, 2000);
-    } else {
-      console.log('실패', result);
+    } catch (error) {
+      console.log('실패', error);
       message.success({
-        content: '포스트 저장에 실패했니다. 다시 시도해주세요.',
+        content: '포스트 저장에 실패했습니다. 다시 시도해주세요.',
         key: 'A',
         duration: 2,
       });
@@ -72,8 +99,31 @@ const WritePage = () => {
     }
   });
 
-  if (!userData) {
-    router.push('/');
+  useEffect(() => {
+    postRevalidate();
+  }, []);
+
+  console.log(beforeImageURLArray);
+
+  const handleDeleteImage = e => {
+    console.log(e.currentTarget);
+    console.log(e.currentTarget.dataset.index);
+    console.log(e.target);
+    setBeforeImageURLArray(p => [
+      ...p.filter((image, index) => {
+        if (index != e.currentTarget.dataset.index) return true;
+        setDeletedImagesId(p => [...p, image.id]);
+        return false;
+      }),
+    ]);
+  };
+
+  if (!userData || userError || postError) {
+    return null;
+  }
+
+  if (isUpdate && !postData) {
+    return null;
   }
 
   return (
@@ -89,11 +139,33 @@ const WritePage = () => {
             type="title"
             control={control}
             placeholder="Title"
-            defaultValue=""
+            defaultValue={postData?.title}
             render={({ field }) => <Input {...field} />}
           />
           {errors.title && (
             <FormErrorMessage errorMessage={errors.title.message} />
+          )}
+        </div>
+        <div>
+          {beforeImageURLArray.length > 0 && (
+            <List
+              itemLayout="horizontal"
+              dataSource={beforeImageURLArray}
+              renderItem={(image, index) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar src={image.src} />}
+                    title={image.src.substr(
+                      image.src.indexOf('original/') + 'original/'.length,
+                    )}
+                  />
+                  <DeleteOutlined
+                    data-index={index}
+                    onClick={handleDeleteImage}
+                  />
+                </List.Item>
+              )}
+            />
           )}
         </div>
         <div>
@@ -116,7 +188,7 @@ const WritePage = () => {
             name="content"
             control={control}
             placeholder="본문을 입력해주세요."
-            defaultValue=""
+            defaultValue={postData?.content}
             autoSize={{ minRows: 10, maxRows: 100 }}
           />
           {errors.content && (
