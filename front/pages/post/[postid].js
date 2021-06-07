@@ -63,7 +63,14 @@ const Post = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Title>{postData.title}</Title>
             {userData?.id === postData.UserId && (
-              <PostDeleteBtn postId={postData.id} />
+              <PostDeleteBtn
+                requestObj={{
+                  target: '게시물',
+                  kind: 'post',
+                  postId: postData.id,
+                  goMain: true,
+                }}
+              />
             )}
           </div>
           <Paragraph>{postData.content}</Paragraph>
@@ -71,7 +78,9 @@ const Post = () => {
         <Col style={{ maxHeight: '100%' }} xs={24} md={24} xl={6}>
           <Divider orientation="left">덧글</Divider>
           {postData.Comments.length > 0 ? (
-            postData.Comments.map(comment => <PostComment comment={comment} />)
+            postData.Comments.map(comment => (
+              <PostComment comment={comment} loginUserId={userData.id} />
+            ))
           ) : (
             <>
               <Title level={3}>덧글이 없습니다.</Title>

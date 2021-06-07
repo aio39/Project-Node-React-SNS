@@ -3,9 +3,10 @@ import React, { useCallback, useState } from 'react';
 
 import Axios from 'axios';
 import CommentTextArea from './CommentTextArea';
+import DeleteBtn from './button/PostDeleteBtn';
 
-const PostComment = ({ comment }) => {
-  const { User, Reply, PostId, id: CommentId } = comment;
+const PostComment = ({ comment, loginUserId }) => {
+  const { User, Reply, PostId, id: CommentId, isDeleted } = comment;
   const [replyTurnOn, setReplyTurnOn] = useState(false);
   const onClickReply = useCallback(() => {
     setReplyTurnOn(!replyTurnOn);
@@ -21,11 +22,21 @@ const PostComment = ({ comment }) => {
       avatar={<Avatar src={User.avatar} alt={User.nickname} />}
       content={<p>{comment.content}</p>}
     >
+      {User.id === loginUserId && !isDeleted ? (
+        <DeleteBtn
+          requestObj={{
+            target: '덧글',
+            kind: 'comment',
+            postId: PostId,
+            commentId: CommentId,
+          }}
+        />
+      ) : null}
       {replyTurnOn ? (
         <CommentTextArea PostId={PostId} CommentId={CommentId} />
       ) : null}
       {Reply?.map(comment => (
-        <PostComment comment={comment} />
+        <PostComment comment={comment} loginUserId={loginUserId} />
       ))}
     </Comment>
   );
