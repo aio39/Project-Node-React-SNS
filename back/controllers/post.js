@@ -1,7 +1,7 @@
 const { urlencoded } = require('express');
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const { Op } = require('sequelize');
-const { Post, Image, Comment, User, Hashtag } = require('../models');
+const { Post, Image, Comment, User, Hashtag, sequelize } = require('../models');
 const { getPostIdAndUserId } = require('../utils/helper');
 
 const createHashtags = async hashtags => {
@@ -98,7 +98,11 @@ module.exports = {
           {
             model: User,
             as: 'Marker',
-            attributes: ['id', 'nickname', 'avatar'],
+            where: {
+              id: req.user.id,
+            },
+            attributes: ['id'],
+            required: false,
           },
           {
             model: Image,
@@ -141,8 +145,15 @@ module.exports = {
           },
         ],
       });
-      console.log(fullPost.Comments);
-      fullPost.Comments = convertDeletedComments(fullPost.Comments);
+      if (fullPost.Comments?.length > 0) {
+        fullPost.Comments = convertDeletedComments(fullPost.Comments);
+      }
+
+      const count = await sequelize.query(
+        'select count(PostId) as count from BookMark where PostId = 66;',
+        { type: Sequelize.QueryTypes.SELECT },
+      );
+      fullPost.dataValues.count = count[0].count;
 
       res.status(200).json(fullPost);
     } catch (error) {
