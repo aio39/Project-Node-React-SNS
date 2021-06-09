@@ -6,7 +6,7 @@ module.exports = {
   development: {
     username: 'root',
     password: process.env.MYSQL_DEV_PASSWORD,
-    database: 'node-project',
+    database: process.env.MYSQL_DEV_DB,
     host: process.env.MYSQL_DEV_HOST,
     port: process.env.MYSQL_DEV_PORT,
     dialect: 'mysql',
@@ -20,9 +20,10 @@ module.exports = {
   },
   production: {
     username: 'root',
-    password: process.env.MYSQL_DB_PASSWORD,
-    database: 'node-project',
-    host: '127.0.0.1',
+    password: process.env.MYSQL_PROD_PASSWORD,
+    database: process.env.MYSQL_PROD_DB,
+    host: process.env.MYSQL_PROD_HOST,
+    port: process.env.MYSQL_PROD_PORT,
     dialect: 'mysql',
   },
 };
