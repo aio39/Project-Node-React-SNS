@@ -1,33 +1,31 @@
-version: '3'
+version: "3"
 services:
-  front:
-    build:
-      dockerfile: Dockerfile
-      context: ./front
-    volumes:
-      - /app/node_modules
-      - ./front:/app
-    stdin_open: true
+    front:
+        restart: always
+        build:
+            dockerfile: Dockerfile
+            context: ./front
+        volumes:
+            - /app/node_modules
+            - /app/.next
+            - ./front:/app
+        stdin_open: true
 
-  nginx:
-    restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
-    ports:
-      - '8081:80'
+    nginx:
+        restart: always
+        build:
+            dockerfile: Dockerfile
+            context: ./nginx
+        ports:
+            - "38081:80"
 
-  back:
-    build:
-      dockerfile: Dockerfile
-      context: ./back
-    container_name: app_back
-    volumes:
-      - /app/node_modules
-      - ./back:/app
-    # environment:
-    #   MYSQL_HOST: mysql
-    #   MYSQL_USER: root
-    #   MYSQL_ROOT_PASSWORD: johnahn777
-    #   MYSQL_DATABASE: myapp
-    #   MYSQL_PORT: 3306
+    back:
+        restart: always
+        build:
+            dockerfile: Dockerfile
+            context: ./back
+        container_name: app_back
+        volumes:
+            - ./back:/app
+            - /app/node_modules
+            - /app/log
