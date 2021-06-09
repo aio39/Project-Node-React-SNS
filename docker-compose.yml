@@ -17,14 +17,14 @@ services:
     ports:
       - '8081:80'
 
-  backend:
+  back:
     build:
       dockerfile: Dockerfile
-      context: ./backend
-    container_name: app_backend
+      context: ./back
+    container_name: app_back
     volumes:
       - /app/node_modules
-      - ./backend:/app
+      - ./back:/app
     # environment:
     #   MYSQL_HOST: mysql
     #   MYSQL_USER: root
