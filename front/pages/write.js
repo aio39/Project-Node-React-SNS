@@ -170,7 +170,11 @@ const WritePage = () => {
         </div>
         <div>
           <Upload
-            action="http://localhost:3005/post/1/image"
+            action={`${
+              process.env.NODE_ENV === 'production'
+                ? process.env.PROD_HOST
+                : process.env.DEV_HOST
+            }/post/${postid}/image`}
             listType="picture"
             withCredentials="true"
             name="image"

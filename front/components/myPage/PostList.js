@@ -47,9 +47,7 @@ const PostList = ({ path, userId }) => {
         lastId = previousPageData[previousPageData.length - 1].id;
       }
       if (lastId !== null && lastId < 2) return null;
-      return `http://localhost:3005/user/${userId}/${path}?${
-        lastId ? `lastId=${lastId}?` : ''
-      }`; // SWR key
+      return `/user/${userId}/${path}?${lastId ? `lastId=${lastId}?` : ''}`; // SWR key
     },
     fetcher,
     {
