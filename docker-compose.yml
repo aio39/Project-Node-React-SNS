@@ -1,0 +1,33 @@
+version: '3'
+services:
+  front:
+    build:
+      dockerfile: Dockerfile
+      context: ./front
+    volumes:
+      - /app/node_modules
+      - ./front:/app
+    stdin_open: true
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '8081:80'
+
+  backend:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    container_name: app_backend
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    # environment:
+    #   MYSQL_HOST: mysql
+    #   MYSQL_USER: root
+    #   MYSQL_ROOT_PASSWORD: johnahn777
+    #   MYSQL_DATABASE: myapp
+    #   MYSQL_PORT: 3306
