@@ -93,7 +93,6 @@ const Home = () => {
             </Row>
           )}
         </>
-        )
       </AppLayout>
     </>
   );
