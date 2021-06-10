@@ -102,13 +102,17 @@ const Post = () => {
               <Title level={3}>덧글이 없습니다.</Title>
             </>
           )}
-          {replyTurnOn ? (
-            <CommentTextArea PostId={postid} setRootReplyOn={setReplyTurnOn} />
-          ) : (
-            <Button type="primary" onClick={onClickReply} block>
-              코멘트 작성
-            </Button>
-          )}
+          {userData &&
+            (replyTurnOn ? (
+              <CommentTextArea
+                PostId={postid}
+                setRootReplyOn={setReplyTurnOn}
+              />
+            ) : (
+              <Button type="primary" onClick={onClickReply} block>
+                코멘트 작성
+              </Button>
+            ))}
         </Col>
       </Row>
     </AppLayout>

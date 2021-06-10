@@ -15,9 +15,11 @@ const PostComment = ({ comment, loginUserId }) => {
   return (
     <Comment
       actions={[
-        <span key="comment-nested-reply-to" onClick={onClickReply}>
-          Reply to
-        </span>,
+        loginUserId ? (
+          <span key="comment-nested-reply-to" onClick={onClickReply}>
+            Reply to
+          </span>
+        ) : null,
       ]}
       author={<a>{User.nickname}</a>}
       avatar={<Avatar src={User.avatar} alt={User.nickname} />}
