@@ -13,6 +13,7 @@ import AppLayout from '../components/layouts/AppLayout';
 import FormErrorMessage from '../components/FormErrorMessage';
 import { signUpValidation } from '../util/validation/yup';
 import ResponsiveLayout from '../components/layouts/ResposiveLayoutA';
+import FormValidationMessage from '../components/FormValidationMessage';
 
 const StyledSignUpForm = styled(Form)`
   > div:not(:first-child) {
@@ -35,7 +36,7 @@ const StyledSignUpForm = styled(Form)`
 const SignUp = () => {
   const {
     control,
-    formState: { errors },
+    formState: { errors, dirtyFields },
     handleSubmit,
   } = useForm({
     resolver: yupResolver(signUpValidation),
@@ -46,6 +47,8 @@ const SignUp = () => {
 
   const [isLoadingPostSingUp, setIsLoadingPostSingUp] = useState(false);
   const [isFailedPost, setIsFailedPost] = useState(false);
+
+  console.log(dirtyFields);
 
   const onSubmit = handleSubmit(async data => {
     setIsLoadingPostSingUp(true);
@@ -73,7 +76,7 @@ const SignUp = () => {
       <ResponsiveLayout>
         <StyledSignUpForm onFinish={onSubmit} size="large">
           <div>
-            <label htmlFor="email">아이디</label>
+            <label htmlFor="email">이메일</label>
             <Controller
               name="email"
               type="email"
@@ -98,6 +101,9 @@ const SignUp = () => {
             {errors.nickname && (
               <FormErrorMessage errorMessage={errors.nickname.message} />
             )}
+            {!dirtyFields.nickname && (
+              <FormValidationMessage validationMessage="닉네임은 3자리 이상입니다." />
+            )}
           </div>
           <div>
             <label htmlFor="password">비밀번호</label>
@@ -111,6 +117,9 @@ const SignUp = () => {
             />
             {errors.password && (
               <FormErrorMessage errorMessage={errors.password.message} />
+            )}
+            {!dirtyFields.password && (
+              <FormValidationMessage validationMessage="영문자와 숫자를 포함해서 10자리 이상입니다." />
             )}
           </div>
           <div>

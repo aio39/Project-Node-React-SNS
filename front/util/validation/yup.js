@@ -16,7 +16,7 @@ export const signUpValidation = yup.object().shape({
     .matches(passwordRegex, '영문자와 숫자가 포함되어야 합니다.')
     .required('비밀번호를 입력해주세요.')
     .max(15, '비밀번호는 20자리 이하여야 합니다.')
-    .min(4, '비밀번호는 10자리 이상이어야 합니다.'),
+    .min(10, '비밀번호는 10자리 이상이어야 합니다.'),
   password2: yup
     .string()
     .oneOf(
