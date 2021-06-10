@@ -88,6 +88,9 @@ module.exports = {
       if (!post) {
         return res.status(404).send('존재하지 않는 게시글입니다.');
       }
+      const MarkerWhere = {};
+      if (req.user?.id) MarkerWhere.id = req.user.id;
+
       const fullPost = await Post.findOne({
         where: { id: post.id },
         include: [
@@ -98,9 +101,7 @@ module.exports = {
           {
             model: User,
             as: 'Marker',
-            where: {
-              id: req.user.id,
-            },
+            where: MarkerWhere,
             attributes: ['id'],
             required: false,
           },
