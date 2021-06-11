@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSWRInfinite } from 'swr';
 import Head from 'next/head';
-import { Button, Col, Row, Spin, Statistic } from 'antd';
+import { Button, Col, Divider, Row, Spin, Statistic } from 'antd';
+import { useRouter } from 'next/router';
+import Title from 'antd/lib/typography/Title';
 import AppLayout from '../components/layouts/AppLayout';
 import { generateDummyPosts } from '../util/dummy';
 import MainPostCard from '../components/MainPostCard';
@@ -11,6 +13,9 @@ import useInfiniteScroll from '../hooks/useInfiniteScroll';
 import MainPostCardSkeleton from '../components/MainPostCardSkeleton';
 
 const Home = () => {
+  const router = useRouter();
+  const { tag } = router.query;
+  console.log(tag);
   const [postsLoadLimit, setPostsLoadLimit] = useState(12);
   const [target, setTarget] = useState(null);
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -36,7 +41,9 @@ const Home = () => {
         lastId = previousPageData[previousPageData.length - 1].id;
       }
       if (lastId !== null && lastId < 2) return null;
-      return `/posts?${lastId ? `lastId=${lastId}?` : ''}`; // SWR key
+      return `/posts?${tag ? `tag=${tag}&` : ''}${
+        lastId ? `lastId=${lastId}?` : ''
+      } `; // SWR key
     },
     fetcher,
     {
@@ -75,6 +82,12 @@ const Home = () => {
       </Head>
       <AppLayout>
         <>
+          {tag && (
+            <Row>
+              <Title>{`${tag}의 검색 결과 입니다.`}</Title>
+              <Divider style={{ margin: '20px 0px' }} />
+            </Row>
+          )}
           <Row gutter={{ xs: 8, sm: 16, md: 24 }} align="top" justify="start">
             {postsDataArray?.flat().map(post => (
               <MainPostCard key={post.id} post={post} />
