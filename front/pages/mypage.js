@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import useSWR from 'swr';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -20,7 +20,6 @@ import Form from 'antd/lib/form/Form';
 import axios from 'axios';
 import styled from 'styled-components';
 import AppLayout from '../components/layouts/AppLayout';
-import PostWriteButton from '../components/PostWriteButton';
 import fetcher from '../util/fetcher';
 
 import { editMyUserDataValidation } from '../util/validation/yup';
@@ -36,6 +35,10 @@ const StyledSignUpForm = styled(Form)`
     position: relative;
     padding-bottom: 8px;
   }
+`;
+
+const UploadBtn = styled(Button)`
+  color: black;
 `;
 
 function isAnyEditing(obj) {
@@ -54,6 +57,8 @@ const MyPage = () => {
   const [isLoadingPatch, setIsLoadingPatch] = useState(false);
   const [isFailedPatch, setIsFailedPatch] = useState(false);
   const [arrayOfEditing, setArrayOfEditing] = useState(notEditing);
+  const buttonRef = useRef();
+
   const uploadOnchange = ({ file }) => {
     if (file.status === 'done') {
       console.log('업로드!');
@@ -95,6 +100,10 @@ const MyPage = () => {
     return null;
   };
 
+  const handleClick = e => {
+    buttonRef.current.click();
+  };
+
   if (!userData) return null;
 
   return (
@@ -121,6 +130,7 @@ const MyPage = () => {
                 size={64}
                 src={userData?.avatar || '/not_avatar.jpg'}
                 icon={<UserOutlined />}
+                onClick={handleClick}
                 style={{
                   width: '200px',
                   height: '200px',
@@ -140,7 +150,7 @@ const MyPage = () => {
                 maxCount={1}
                 style={{ position: 'absolute' }}
               >
-                <Button icon={<UploadOutlined />} />
+                <UploadBtn ref={buttonRef} icon={<UploadOutlined />} />
               </Upload>
             </div>
           </Col>
