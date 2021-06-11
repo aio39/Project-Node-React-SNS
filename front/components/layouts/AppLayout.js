@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,6 +13,7 @@ import {
 import useSWR from 'swr';
 import Search from 'antd/lib/input/Search';
 import Axios from 'axios';
+import styled from 'styled-components';
 import fetcher from '../../util/fetcher';
 import LogOutButton from '../myPage/LogOutButton';
 
@@ -24,21 +25,25 @@ const siteLayout = {
   margin: '30px 0px',
 };
 
-function getRandomInt(max, min = 0) {
-  return Math.floor(Math.random() * (max - min + 1)) + min; // eslint-disable-line no-mixed-operators
-}
+const MenuWrapper = styled(Menu)`
+  ul {
+    flex: 1 1 auto;
+    display: flex;
+  }
+`;
 
 const fetchWithParams = (url, params) =>
   Axios.get(`${url}/?tag=${params}`, { withCredentials: true }).then(
     response => response.data,
   );
+
 const AppLayout = ({ children }) => {
   const router = useRouter();
   const current = router.pathname === '/' ? 'home' : router.pathname.slice(1);
 
   const { data: userData } = useSWR('/user', fetcher);
   const [options, setOptions] = useState([]);
-  const [searchParams, setSearchParams] = useDebounce('', 500, false);
+  const [searchParams, setSearchParams] = useDebounce('', 200, false);
   const {
     data: searchData,
     error: searchError,
@@ -50,49 +55,73 @@ const AppLayout = ({ children }) => {
   );
 
   const handleSearch = value => {
-    setOptions(value ? searchResult(value) : []);
+    if (new TextEncoder().encode(value).length < 3) return;
+    const q = value.match(/^[가-힣a-zA-Z\s]+$/i);
+    console.log(`q:${q}`);
+    if (q) setSearchParams(q[0]);
   };
-  console.log('isValidating ', isValidating);
 
   const onSelect = value => {
     console.log('onSelect', value);
   };
 
-  const searchResult = query => {
-    const q = query.match(/^[가-힣a-zA-Z\s]+$/i);
-    if (q) setSearchParams(q[0]);
-    console.log('searchData:', searchData);
-    console.log(searchParams);
-    console.log('서치 실행');
-    if (!searchData) return null;
-    if (searchData.length === 0) return <div>검색 결과 없음.</div>;
-    return searchData.map((data, idx) => {
-      const category = `${query}${idx}`;
-      return {
-        value: data.name,
-        label: (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>
-              <a
-                href={`https://s.taobao.com/search?q=${query}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {data.name}
-              </a>
-            </span>
-            {/* <span>{getRandomInt(200, 100)} results</span> //결과창 */}
-          </div>
-        ),
-      };
-    });
+  const searchResult = () => {
+    if (!searchData) return [];
+    if (searchData.length === 0) {
+      return [
+        {
+          value: '검색 결과없음.',
+          label: (
+            <div
+              key="검색 결과없음."
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <span>
+                <a href={null} target="_blank" rel="noopener noreferrer">
+                  검색 결과없음.
+                </a>
+              </span>
+              {/* <span>{getRandomInt(200, 100)} results</span> //결과창 */}
+            </div>
+          ),
+        },
+      ];
+    }
+    return searchData.map((data, idx) => ({
+      value: data.name,
+      label: (
+        <div
+          key={data.name}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span>
+            <a href={null} target="_blank" rel="noopener noreferrer">
+              {data.name}
+            </a>
+          </span>
+          {/* <span>{getRandomInt(200, 100)} results</span> //결과창 */}
+        </div>
+      ),
+    }));
   };
 
+  useEffect(() => {
+    revalidate();
+  }, [searchParams]);
+
+  useEffect(() => {
+    const renderArray = searchData ? searchResult() : [];
+    setOptions(renderArray);
+  }, [searchData]);
+
+  console.log('isRevali', isValidating);
+  console.log('searchParams', searchParams);
   return (
     <>
       <Layout style={{ minHeight: '100vh' }}>
@@ -107,7 +136,7 @@ const AppLayout = ({ children }) => {
             alignItems: 'center',
           }}
         >
-          <Menu
+          <MenuWrapper
             theme="dark"
             // mode="horizontal"
             mode="inline"
@@ -151,7 +180,7 @@ const AppLayout = ({ children }) => {
                 </Menu.Item>
               </>
             )}
-          </Menu>
+          </MenuWrapper>
           <AutoComplete
             dropdownMatchSelectWidth={252}
             style={{ width: 300 }}
