@@ -70,7 +70,7 @@ const MyPage = () => {
     mode: 'onBlur',
   });
 
-  const onSubmit = handleSubmit(async (editData) => {
+  const onSubmit = handleSubmit(async editData => {
     setIsFailedPatch(false);
     setIsLoadingPatch(true);
 
@@ -89,9 +89,9 @@ const MyPage = () => {
     }
   });
 
-  const handleIsEditingChange = (e) => {
+  const handleIsEditingChange = e => {
     const { key } = e.currentTarget.dataset;
-    setArrayOfEditing((p) => ({ ...p, [key]: !p[key] }));
+    setArrayOfEditing(p => ({ ...p, [key]: !p[key] }));
     return null;
   };
 
@@ -130,9 +130,11 @@ const MyPage = () => {
               <Upload
                 name="image"
                 withCredentials="true"
-                action={`${process.env.NODE_ENV === 'production'
-                  ? process.env.PROD_HOST
-                  : process.env.DEV_HOST}/user/avatar`}
+                action={`${
+                  process.env.NODE_ENV === 'production'
+                    ? process.env.PROD_HOST
+                    : process.env.DEV_HOST
+                }/user/avatar`}
                 onChange={uploadOnchange}
                 showUploadList={false}
                 maxCount={1}
@@ -153,19 +155,19 @@ const MyPage = () => {
                   render={({ field }) => (
                     <Input
                       disabled={!arrayOfEditing.nickname}
-                      prefix={(
+                      prefix={
                         <>
                           <Text>이름</Text> <Divider type="vertical" />
                         </>
-                      )}
-                      suffix={(
+                      }
+                      suffix={
                         <Button
                           shape="circle"
                           onClick={handleIsEditingChange}
                           icon={<FormOutlined />}
                           data-key="nickname"
                         />
-                      )}
+                      }
                       {...field}
                     />
                   )}
@@ -182,19 +184,19 @@ const MyPage = () => {
                   render={({ field }) => (
                     <Input
                       disabled={!arrayOfEditing.description}
-                      prefix={(
+                      prefix={
                         <>
                           <Text>설명</Text> <Divider type="vertical" />
                         </>
-                      )}
-                      suffix={(
+                      }
+                      suffix={
                         <Button
                           shape="circle"
                           onClick={handleIsEditingChange}
                           icon={<FormOutlined />}
                           data-key="description"
                         />
-                      )}
+                      }
                       {...field}
                     />
                   )}
@@ -209,19 +211,19 @@ const MyPage = () => {
                       type="password"
                       placeholder="현재 비밀번호를 입력해주세요"
                       disabled={!arrayOfEditing.password}
-                      prefix={(
+                      prefix={
                         <Divider>
                           <Text>비밀번호</Text> <Divider type="vertical" />
                         </Divider>
-                      )}
-                      suffix={(
+                      }
+                      suffix={
                         <Button
                           shape="circle"
                           onClick={handleIsEditingChange}
                           icon={<FormOutlined />}
                           data-key="password"
                         />
-                      )}
+                      }
                       {...field}
                     />
                   )}
@@ -237,12 +239,12 @@ const MyPage = () => {
                         <Input
                           type="password"
                           placeholder="새로운 비밀번호를 입력해주세요."
-                          prefix={(
+                          prefix={
                             <>
                               <Text>새 비밀번호</Text>{' '}
                               <Divider type="vertical" />
                             </>
-                          )}
+                          }
                           {...field}
                         />
                       )}
@@ -261,12 +263,12 @@ const MyPage = () => {
                         <Input
                           type="password"
                           placeholder="새로운 비밀번호를 한번더 입력해주세요."
-                          prefix={(
+                          prefix={
                             <>
                               <Text>비밀번호 확인</Text>{' '}
                               <Divider type="vertical" />
                             </>
-                          )}
+                          }
                           {...field}
                         />
                       )}
@@ -302,8 +304,8 @@ const MyPage = () => {
                       isLoadingPatch
                         ? 'Saving'
                         : isFailedPatch
-                          ? 'Retry, '
-                          : 'SAVE'
+                        ? 'Retry, '
+                        : 'SAVE'
                     }  `}
                   </Button>
                 </Affix>
@@ -314,6 +316,7 @@ const MyPage = () => {
         <Row>
           <Col xl={8} md={12} xs={24}>
             <Divider orientation="left">북마크</Divider>
+            <PostList path="bookmark" userId={userData.id} />
           </Col>
 
           <Col xl={8} md={12} xs={24}>
