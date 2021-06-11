@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { memo, useState } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import axios from 'axios';
 
 const BookmarkBtn = ({ isBookmarked, postid, userData, count }) => {
   const URL = `/user/${userData.id}/bookmarks/${postid}`;
+  const [isBooked, setIsBooked] = useState(isBookmarked);
+  const [bookCount, setBookCount] = useState(count);
+  console.log(isBookmarked);
 
   const handleClick = async () => {
-    if (isBookmarked) {
-      await axios.delete(URL);
-    } else {
-      await axios.patch(URL);
+    try {
+      setIsBooked(p => !p);
+      if (isBooked) {
+        setBookCount(p => p - 1);
+        await axios.delete(URL);
+      } else {
+        setBookCount(p => p + 1);
+        await axios.patch(URL);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsBooked(p => !p);
+      if (isBooked) {
+        setBookCount(p => p + 1);
+      } else {
+        setBookCount(p => p - 1);
+      }
+
+      message.error('북마크 저장에 실패했습니다.');
     }
   };
 
@@ -18,11 +36,12 @@ const BookmarkBtn = ({ isBookmarked, postid, userData, count }) => {
     <>
       <Button
         onClick={handleClick}
-        type="ghost"
+        type={isBooked ? 'primary' : 'ghost'}
         shape="circle"
         icon={<InboxOutlined />}
+        size="large"
       />
-      {count}
+      {bookCount}
     </>
   );
 };
