@@ -130,6 +130,42 @@ userRouter.get('/:userId/posts', async (req, res, next) => {
     next(error);
   }
 });
+
+userRouter.get('/:userId/bookmark', async (req, res, next) => {
+  try {
+    const { id: UserId } = req.user;
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) {
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
+
+    const posts = await Post.findAll({
+      where,
+      limit: 6,
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: ['nickname', 'avatar'],
+        },
+        {
+          model: User,
+          as: 'Marker',
+          where: {
+            id: UserId,
+          },
+        },
+        {
+          model: Image,
+        },
+      ],
+    });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 userRouter
   .route('/:userId/bookmarks/:postId')
   .patch(patchBookmarkToPost)
