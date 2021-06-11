@@ -49,7 +49,11 @@ const PostComment = ({ comment, loginUserId }) => {
         </DeleteBtnWrapper>
       ) : null}
       {replyTurnOn ? (
-        <CommentTextArea PostId={PostId} CommentId={CommentId} />
+        <CommentTextArea
+          PostId={PostId}
+          CommentId={CommentId}
+          setReplyTurnOn={setReplyTurnOn}
+        />
       ) : null}
       {Reply?.map(comment => (
         <PostComment

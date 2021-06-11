@@ -29,7 +29,13 @@ const Post = () => {
   const { postid } = router.query;
   const URL = `/post/${postid}`;
 
-  const { data: postData, errors: postError } = useSWR(URL, fetcher);
+  const { data: postData, errors: postError } = useSWR(
+    postid ? URL : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    },
+  );
   const { data: userData } = useSWR('/user', fetcher);
   const [replyTurnOn, setReplyTurnOn] = useState(false);
   const onClickReply = useCallback(() => {

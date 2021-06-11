@@ -41,7 +41,6 @@ userRouter.post('/login', isNotLoggedIn, (req, res, next) => {
 });
 
 userRouter.get('/', (req, res) => {
-  console.log(req.user);
   return res.json(req.user || false);
 });
 
