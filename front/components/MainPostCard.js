@@ -64,7 +64,7 @@ const MainPostCard = ({ post }) => (
             <>
               <Divider orientation="left">Tags</Divider>
               {post.Hashtags.map(tag => (
-                <Link href={`/tag/${tag.name}`}>
+                <Link key={tag.name} href={`/?tag=${tag.name}`}>
                   <Tag style={{ weight: 600 }} color={randomColorSel()}>
                     {' '}
                     {tag.name}

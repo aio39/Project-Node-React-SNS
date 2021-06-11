@@ -55,7 +55,7 @@ const AppLayout = ({ children }) => {
   );
 
   const handleSearch = value => {
-    if (new TextEncoder().encode(value).length < 3) return;
+    if (new TextEncoder().encode(value).length < 4) return; // 한글 1글자 초과, 영어 3글자 초과
     const q = value.match(/^[가-힣a-zA-Z\s]+$/i);
     console.log(`q:${q}`);
     if (q) setSearchParams(q[0]);
@@ -93,20 +93,18 @@ const AppLayout = ({ children }) => {
     return searchData.map((data, idx) => ({
       value: data.name,
       label: (
-        <div
-          key={data.name}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <span>
-            <a href={null} target="_blank" rel="noopener noreferrer">
-              {data.name}
-            </a>
-          </span>
-          {/* <span>{getRandomInt(200, 100)} results</span> //결과창 */}
-        </div>
+        <Link prefetch={false} href={`/?tag=${encodeURI(data.name)}`}>
+          <div
+            key={data.name}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span>{data.name}</span>
+            {/* <span>{getRandomInt(200, 100)} results</span> //결과창 */}
+          </div>
+        </Link>
       ),
     }));
   };
