@@ -4,6 +4,7 @@
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 const passport = require('passport');
 const redis = require('redis');
 
@@ -23,6 +24,7 @@ morganAndCorsConfig(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(compression());
 
 //  Redis 설정
 const RedisStore = require('connect-redis')(session);
