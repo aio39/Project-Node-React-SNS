@@ -77,12 +77,12 @@ const Home = () => {
         <>
           <Row gutter={{ xs: 8, sm: 16, md: 24 }} align="top" justify="start">
             {postsDataArray?.flat().map(post => (
-              <MainPostCard post={post} />
+              <MainPostCard key={post.id} post={post} />
             ))}
             {showSkeleton &&
               Array(12)
                 .fill()
-                .map(a => <MainPostCardSkeleton />)}
+                .map((a, index) => <MainPostCardSkeleton key={index} />)}
           </Row>
           {postsDataArray && (
             <Row justify="center">
