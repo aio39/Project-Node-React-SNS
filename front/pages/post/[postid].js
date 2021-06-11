@@ -11,6 +11,7 @@ import AppLayout from '../../components/layouts/AppLayout';
 import PostComment from '../../components/PostComment';
 import CommentTextArea from '../../components/CommentTextArea';
 import DeleteBtn from '../../components/button/DeleteBtn';
+import BookmarkBtn from '../../components/button/BookmarkBtn';
 
 const fetcher = async url => {
   const result = await Axios.get(url);
@@ -92,6 +93,22 @@ const Post = () => {
             </ImageWrapper>
           ))}
           <Paragraph>{postData.content}</Paragraph>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <BookmarkBtn
+              isBookmarked={postData.Marker?.length === 1}
+              userData={userData}
+              postid={postid}
+              count={postData.count}
+            />
+          </div>
         </Col>
         <Col style={{ maxHeight: '100%' }} xs={24} md={24} xl={6}>
           <Divider orientation="left">덧글</Divider>
