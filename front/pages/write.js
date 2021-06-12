@@ -217,15 +217,17 @@ const WritePage = () => {
           >
             포스팅
           </Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={isLoadingPost}
-            block
-            onClick={onClickSaveTemp}
-          >
-            임시저장
-          </Button>
+          {postData?.isTemp === false || (
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isLoadingPost}
+              block
+              onClick={onClickSaveTemp}
+            >
+              임시저장
+            </Button>
+          )}
         </div>
       </StyledPostForm>
     </AppLayout>
