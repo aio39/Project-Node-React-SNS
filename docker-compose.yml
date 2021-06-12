@@ -1,31 +1,33 @@
-version: "3"
+version: '3'
 services:
-    front:
-        restart: always
-        build:
-            dockerfile: Dockerfile
-            context: ./front
-        volumes:
-            - /app/node_modules
-            - /app/.next
-            - ./front:/app
-        stdin_open: true
+  front:
+    container_name: app_front
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./front
+    volumes:
+      - /app/node_modules
+      - /app/.next
+      - ./front:/app
+    stdin_open: true
 
-    nginx:
-        restart: always
-        build:
-            dockerfile: Dockerfile
-            context: ./nginx
-        ports:
-            - "38081:80"
+  nginx:
+    container_name: app_nginx
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '38081:80'
 
-    back:
-        restart: always
-        build:
-            dockerfile: Dockerfile
-            context: ./back
-        container_name: app_back
-        volumes:
-            - ./back:/app
-            - /app/node_modules
-            - /app/log
+  back:
+    container_name: app_back
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./back
+    volumes:
+      - ./back:/app
+      - /app/node_modules
+      - /app/log
