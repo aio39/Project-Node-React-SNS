@@ -41,6 +41,28 @@ const UploadBtn = styled(Button)`
   color: black;
 `;
 
+const UploadWrapper = styled('div')`
+  color: red;
+  .ant-btn {
+    color: white;
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0);
+    border-radius: 50%;
+    transition: background 0.3s ease-in-out;
+    svg {
+      transition: font-size 0.3s ease-in-out;
+      font-size: 2rem;
+    }
+  }
+  .ant-btn: hover {
+    background: rgba(0, 0, 0, 0.3);
+    svg {
+      font-size: 2.5rem;
+    }
+  }
+`;
+
 function isAnyEditing(obj) {
   return Object.values(obj).includes(true);
 }
@@ -137,21 +159,23 @@ const MyPage = () => {
                   position: 'absolute',
                 }}
               />
-              <Upload
-                name="image"
-                withCredentials="true"
-                action={`${
-                  process.env.NODE_ENV === 'production'
-                    ? process.env.PROD_HOST
-                    : process.env.DEV_HOST
-                }/user/avatar`}
-                onChange={uploadOnchange}
-                showUploadList={false}
-                maxCount={1}
-                style={{ position: 'absolute' }}
-              >
-                <UploadBtn ref={buttonRef} icon={<UploadOutlined />} />
-              </Upload>
+              <UploadWrapper>
+                <Upload
+                  name="image"
+                  withCredentials="true"
+                  action={`${
+                    process.env.NODE_ENV === 'production'
+                      ? process.env.PROD_HOST
+                      : process.env.DEV_HOST
+                  }/user/avatar`}
+                  onChange={uploadOnchange}
+                  showUploadList={false}
+                  maxCount={1}
+                  style={{ position: 'absolute' }}
+                >
+                  <UploadBtn ref={buttonRef} icon={<UploadOutlined />} />
+                </Upload>
+              </UploadWrapper>
             </div>
           </Col>
           <Col xl={8} md={12} xs={24} style={{ maxWidth: '100%' }}>
