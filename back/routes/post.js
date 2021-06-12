@@ -7,8 +7,6 @@ const {
   postImage,
   postCommentToPost,
   deleteCommentToPost,
-  patchBookmarkToPost,
-  deleteBookmarkToPost,
 } = require('../controllers/post');
 const { isNotLoggedIn, isLoggedIn } = require('../utils/checkLoginMiddleware');
 const { postImageUpload } = require('../utils/multer');

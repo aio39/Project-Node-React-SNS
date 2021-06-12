@@ -7,7 +7,9 @@ module.exports = {
   extends: ['airbnb-base', 'eslint:recommended', 'plugin:prettier/recommended'],
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: 'module',
+    sourceType: 'script',
   },
-  rules: {},
+  rules: {
+    'no-console': 'off',
+  },
 };
