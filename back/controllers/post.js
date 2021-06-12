@@ -151,7 +151,7 @@ module.exports = {
       }
 
       const count = await sequelize.query(
-        'select count(PostId) as count from BookMark where PostId = 66;',
+        `select count(PostId) as count from BookMark where PostId = ${req.params.postId};`,
         { type: Sequelize.QueryTypes.SELECT },
       );
       fullPost.dataValues.count = count[0].count;
