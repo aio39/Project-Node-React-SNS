@@ -336,6 +336,7 @@ const MyPage = () => {
 
           <Col xl={8} md={12} xs={24}>
             <Divider orientation="left">임시 저장</Divider>
+            <PostList path="temps" userId={userData.id} linkToWrite />
           </Col>
         </Row>
       </AppLayout>

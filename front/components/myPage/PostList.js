@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { useSWRInfinite } from 'swr';
 import useMediaQuery from 'use-media-antd-query';
 
-const PostList = ({ path, userId }) => {
+const PostList = ({ path, userId, linkToWrite }) => {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const colSize = useMediaQuery();
   const fetcher = url => {
@@ -63,7 +63,13 @@ const PostList = ({ path, userId }) => {
       loading={false}
       dataSource={postsDataArray.flat()}
       renderItem={post => (
-        <Link href={`/post/${post.id}/`}>
+        <Link
+          href={
+            linkToWrite
+              ? `/write?isupdate=true&postid=${post.id}`
+              : `/post/${post.id}/`
+          }
+        >
           <List.Item
             style={{
               display: 'flex',
