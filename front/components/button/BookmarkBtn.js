@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import { Button, message } from 'antd';
 import axios from 'axios';
@@ -7,7 +7,11 @@ const BookmarkBtn = ({ isBookmarked, postid, userData, count }) => {
   const URL = `/user/${userData.id}/bookmarks/${postid}`;
   const [isBooked, setIsBooked] = useState(isBookmarked);
   const [bookCount, setBookCount] = useState(count);
-  console.log(isBookmarked);
+
+  useEffect(() => {
+    setBookCount(count);
+    setIsBooked(isBookmarked);
+  }, [count, isBookmarked]);
 
   const handleClick = async () => {
     try {
@@ -27,7 +31,6 @@ const BookmarkBtn = ({ isBookmarked, postid, userData, count }) => {
       } else {
         setBookCount(p => p - 1);
       }
-
       message.error('북마크 저장에 실패했습니다.');
     }
   };
