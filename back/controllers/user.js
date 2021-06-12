@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { User, Post, Image } = require('../models');
+const { truncate } = require('../models/post');
 
 module.exports = {
   postUserLogin: (req, res, next) => {
@@ -102,6 +103,37 @@ module.exports = {
       const { id: UserId } = req.user;
       const where = {
         UserId,
+        isTemp: false,
+      };
+      if (parseInt(req.query.lastId, 10)) {
+        where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+      }
+      const posts = await Post.findAll({
+        where,
+        limit: 6,
+        order: [['createdAt', 'DESC']],
+        include: [
+          {
+            model: User,
+            attributes: ['nickname', 'avatar'],
+          },
+          {
+            model: Image,
+          },
+        ],
+      });
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  },
+  getUserTemps: async (req, res, next) => {
+    try {
+      const { id: UserId } = req.user;
+      const where = {
+        UserId,
+        isTemp: true,
       };
       if (parseInt(req.query.lastId, 10)) {
         where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };

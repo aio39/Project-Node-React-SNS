@@ -12,6 +12,7 @@ const {
   getUserPosts,
   getUserBookmark,
   postAvatar,
+  getUserTemps,
 } = require('../controllers/user');
 
 const userRouter = express.Router();
@@ -28,7 +29,7 @@ userRouter.patch('/', patchUser);
 
 userRouter.get('/:userId');
 userRouter.get('/:userId/posts', getUserPosts);
-
+userRouter.get('/:userId/temps', getUserTemps);
 userRouter.get('/:userId/bookmark', getUserBookmark);
 userRouter
   .route('/:userId/bookmarks/:postId')

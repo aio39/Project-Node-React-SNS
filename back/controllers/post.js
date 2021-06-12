@@ -41,6 +41,7 @@ module.exports = {
         content,
         title: req.body.title,
         UserId: req.user.id,
+        isTemp: req.body.isTemp,
       });
       if (hashtags) {
         const result = await createHashtags(hashtags);
@@ -169,10 +170,8 @@ module.exports = {
     }
   },
   patchPost: async (req, res, next) => {
-    console.log(req.body);
-    const { content, title, image, deletedImagesId } = req.body;
-    const body = { content, title };
-    console.log(body);
+    const { content, title, image, deletedImagesId, isTemp } = req.body;
+    const body = { content, title, isTemp };
     const hashtags = req.body.content.match(/#[^\s#]+/g);
 
     try {
