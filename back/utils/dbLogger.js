@@ -5,11 +5,11 @@ const dayjs = require('dayjs');
 const date = dayjs().format('YYYY[_]MM[_]DD');
 const time = dayjs().format('H:mm:ss');
 
-const logPath = path.join('./', `/log`);
+const logPath = path.join('./', `/log/db`);
 
 if (!fs.existsSync(logPath)) fs.mkdirSync(logPath, { recursive: true });
 
-console.log(`📂Query Log File : ./log/`);
+console.log(`📂Query Log File : ./log/db`);
 
 const log = fs.createWriteStream(`${logPath}/${date}.log`, { flags: 'a' });
 log.write(`\n\n[${time}]\n`);

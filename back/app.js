@@ -12,6 +12,7 @@ const db = require('./models');
 const passportConfig = require('./passport');
 const apiRouter = require('./routes/api');
 const morganAndCorsConfig = require('./utils/morganAndCorsConfig');
+const logRouter = require('./routes/log');
 
 require('dotenv').config();
 
@@ -52,6 +53,7 @@ app.use(
 app.use(passport.initialize()); // login , logout 메소드
 app.use(passport.session()); // session 데이터를 req.user로
 
+app.use('/log', logRouter);
 app.use('/api', apiRouter);
 
 app.use((err, req, res, next) => {
