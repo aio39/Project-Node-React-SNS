@@ -88,6 +88,12 @@ module.exports = {
       if (!post) {
         return res.status(404).send('존재하지 않는 게시글입니다.');
       }
+      if (
+        post.dataValues.isTemp === true &&
+        post.dataValues.UserId !== +req.user?.id
+      ) {
+        return res.status(403).send('임시 저장글의 작성자가 아닙니다.');
+      }
       const MarkerWhere = {};
       if (req.user?.id) MarkerWhere.id = req.user.id;
 
@@ -304,7 +310,9 @@ module.exports = {
   getPosts: async (req, res, next) => {
     try {
       const { tag } = req.query;
-      const where = {};
+      const where = {
+        isTemp: false,
+      };
       if (parseInt(req.query.lastId, 10)) {
         where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
       }

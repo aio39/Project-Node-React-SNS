@@ -1,4 +1,5 @@
 const DataTypes = require('sequelize');
+
 const { Model } = DataTypes;
 
 module.exports = class Post extends Model {
@@ -12,6 +13,11 @@ module.exports = class Post extends Model {
         content: {
           type: DataTypes.TEXT,
           allowNull: false,
+        },
+        isTemp: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         },
       },
       {
