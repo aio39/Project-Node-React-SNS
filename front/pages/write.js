@@ -66,10 +66,13 @@ const WritePage = () => {
     }
   };
 
-  const onSubmit = handleSubmit(async data => {
+  let isTemp = false;
+  const onSubmit = handleSubmit(async (data, e) => {
+    console.log('e', e);
     message.loading({ content: '포스트를 저장중입니다', key: 'A' });
     setIsLoadingPost(true);
     setIsFailedPost(false);
+    data.isTemp = isTemp;
     data.image = imageURLArray;
     data.deletedImagesId = deletedImagesId;
     try {
@@ -104,6 +107,11 @@ const WritePage = () => {
   }, []);
 
   console.log(beforeImageURLArray);
+
+  const onClickSaveTemp = e => {
+    console.log('save temp');
+    isTemp = true;
+  };
 
   const handleDeleteImage = e => {
     console.log(e.currentTarget);
@@ -208,6 +216,15 @@ const WritePage = () => {
             block
           >
             포스팅
+          </Button>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isLoadingPost}
+            block
+            onClick={onClickSaveTemp}
+          >
+            임시저장
           </Button>
         </div>
       </StyledPostForm>
