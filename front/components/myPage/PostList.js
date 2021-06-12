@@ -4,8 +4,21 @@ import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { useSWRInfinite } from 'swr';
 import useMediaQuery from 'use-media-antd-query';
+
+const HoverDiv = styled('div')`
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.2s ease-in-out;
+  :hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+`;
 
 const PostList = ({ path, userId, linkToWrite }) => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -70,33 +83,38 @@ const PostList = ({ path, userId, linkToWrite }) => {
               : `/post/${post.id}/`
           }
         >
-          <List.Item
-            style={{
-              display: 'flex',
-              flexDirection: 'row-reverse',
-              marginBottom: '10px',
-              padding: '0px',
-            }}
-            key={post.id}
-            extra={
-              <img
-                style={{ ...imageSize(colSize), margin: '0px 15px 0px 0px' }}
-                alt="logo"
-                src={
-                  post.Images.length > 0 ? post.Images[0].src : '/not_image.png'
-                }
-              />
-            }
-          >
-            <List.Item.Meta
+          <div style={{ position: 'relative' }}>
+            <List.Item
               style={{
-                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                marginBottom: '10px',
+                padding: '0px',
               }}
-              avatar={<Avatar src={post.User?.avatar || '/not_avatar.jpg'} />}
-              title={<Text>{post.User.nickname}</Text>}
-            />
-            <Title level={3}>{post.title}</Title>
-          </List.Item>
+              key={post.id}
+              extra={
+                <img
+                  style={{ ...imageSize(colSize), margin: '0px 15px 0px 0px' }}
+                  alt="logo"
+                  src={
+                    post.Images.length > 0
+                      ? post.Images[0].src
+                      : '/not_image.png'
+                  }
+                />
+              }
+            >
+              <List.Item.Meta
+                style={{
+                  overflow: 'hidden',
+                }}
+                avatar={<Avatar src={post.User?.avatar || '/not_avatar.jpg'} />}
+                title={<Text>{post.User.nickname}</Text>}
+              />
+              <Title level={3}>{post.title}</Title>
+            </List.Item>
+            <HoverDiv />
+          </div>
         </Link>
       )}
     />
