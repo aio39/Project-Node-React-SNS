@@ -224,6 +224,7 @@ const WritePage = () => {
               loading={isLoadingPost}
               block
               onClick={onClickSaveTemp}
+              style={{ marginTop: '15px' }}
             >
               임시저장
             </Button>
