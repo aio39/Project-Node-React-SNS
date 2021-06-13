@@ -17,28 +17,28 @@ const {
 
 const userRouter = express.Router();
 
-userRouter.post('/login', isNotLoggedIn, postUserLogin);
-
+// for useSWR Check Login
 userRouter.get('/', (req, res) => {
   return res.json(req.user || false);
 });
 
 userRouter.post('/', isNotLoggedIn, postUser);
+userRouter.post('/login', isNotLoggedIn, postUserLogin);
+
+userRouter.all(isLoggedIn);
 
 userRouter.patch('/', patchUser);
+userRouter.post('/logout', postLogout);
+userRouter.post('/avatar', avatarImageUpload.single('image'), postAvatar);
 
 userRouter.get('/:userId');
 userRouter.get('/:userId/posts', getUserPosts);
 userRouter.get('/:userId/temps', getUserTemps);
 userRouter.get('/:userId/bookmark', getUserBookmark);
+
 userRouter
   .route('/:userId/bookmarks/:postId')
   .patch(patchBookmarkToPost)
   .delete(deleteBookmarkToPost);
-userRouter.get('/:userId/temp');
-
-userRouter.post('/avatar', avatarImageUpload.single('image'), postAvatar);
-
-userRouter.post('/logout', isLoggedIn, postLogout);
 
 module.exports = userRouter;
