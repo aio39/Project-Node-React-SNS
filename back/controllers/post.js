@@ -200,16 +200,16 @@ module.exports = {
           },
         });
       }
-      // if (hashtags) {
-      //   const result = await Promise.all(
-      //     hashtags.map(tag =>
-      //       Hashtag.findOrCreate({
-      //         where: { name: tag.slice(1).toLowerCase() },
-      //       }),
-      //     ),
-      //   );
-      //   await post.setHashtags(result.map(v => v[0]));
-      // }
+      if (hashtags) {
+        const result = await Promise.all(
+          hashtags.map(tag =>
+            Hashtag.findOrCreate({
+              where: { name: tag.slice(1).toLowerCase() },
+            }),
+          ),
+        );
+        await post.setHashtags(result.map(v => v[0]));
+      }
 
       res.status(200).json({
         id: parseInt(req.params.postId, 10),
