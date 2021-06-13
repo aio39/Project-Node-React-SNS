@@ -25,7 +25,7 @@ const MainPostCard = ({ post }) => (
     >
       <Link href={`/post/${post.id}`}>
         <Card
-          title={`${post.title}`}
+          title={<Title level={3}>{`${post.title}`}</Title>}
           hoverable
           style={{
             width: '100%',
