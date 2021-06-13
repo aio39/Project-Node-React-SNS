@@ -325,6 +325,7 @@ const MyPage = () => {
                     right: 0,
                     margin: 'auto',
                     width: '200px',
+                    zIndex: 1,
                   }}
                 >
                   <Button
