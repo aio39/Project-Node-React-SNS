@@ -4,7 +4,7 @@ import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSWRInfinite } from 'swr';
 import useMediaQuery from 'use-media-antd-query';
@@ -91,8 +91,13 @@ const PostList = ({ path, userId, linkToWrite }) => {
   const handleLeft = () => {
     setSize(n => --n);
   };
-  console.log(`size:${size}`);
 
+  useEffect(
+    () => () => {
+      setSize(1);
+    },
+    [],
+  );
   const valSize = isValidating ? size - 1 : size;
 
   if (!postsDataArray) return null;
