@@ -1,4 +1,5 @@
-import { List, Avatar } from 'antd';
+import { List, Avatar, Button, Spin } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import Text from 'antd/lib/typography/Text';
 import Title from 'antd/lib/typography/Title';
 import axios from 'axios';
@@ -50,6 +51,7 @@ const PostList = ({ path, userId, linkToWrite }) => {
   const {
     data: postsDataArray,
     error: postsError,
+    isValidating,
     size,
     setSize,
   } = useSWRInfinite(
@@ -68,56 +70,86 @@ const PostList = ({ path, userId, linkToWrite }) => {
       // dedupingInterval: 3000,
     },
   );
+
+  const handleRight = () => {
+    setSize(n => ++n);
+  };
+  const handleLeft = () => {
+    setSize(n => --n);
+  };
+  console.log(`size:${size}`);
+
+  const valSize = isValidating ? size - 1 : size;
+
   if (!postsDataArray) return null;
   return (
-    <List
-      itemLayout="vertical"
-      size="large"
-      loading={false}
-      dataSource={postsDataArray.flat()}
-      renderItem={post => (
-        <Link
-          href={
-            linkToWrite
-              ? `/write?isupdate=true&postid=${post.id}`
-              : `/post/${post.id}/`
-          }
-        >
-          <div style={{ position: 'relative' }}>
-            <List.Item
-              style={{
-                display: 'flex',
-                flexDirection: 'row-reverse',
-                marginBottom: '10px',
-                padding: '0px',
-              }}
-              key={post.id}
-              extra={
-                <img
-                  style={{ ...imageSize(colSize), margin: '0px 15px 0px 0px' }}
-                  alt="logo"
-                  src={
-                    post.Images.length > 0
-                      ? post.Images[0].src
-                      : '/not_image.png'
-                  }
-                />
-              }
-            >
-              <List.Item.Meta
+    <Spin spinning={isValidating}>
+      <List
+        itemLayout="vertical"
+        size="large"
+        loading={false}
+        dataSource={postsDataArray[valSize - 1]}
+        renderItem={post => (
+          <Link
+            href={
+              linkToWrite
+                ? `/write?isupdate=true&postid=${post.id}`
+                : `/post/${post.id}/`
+            }
+          >
+            <div style={{ position: 'relative' }}>
+              <List.Item
                 style={{
-                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'row-reverse',
+                  marginBottom: '10px',
+                  padding: '0px',
                 }}
-                avatar={<Avatar src={post.User?.avatar || '/not_avatar.jpg'} />}
-                title={<Text>{post.User.nickname}</Text>}
-              />
-              <Title level={3}>{post.title}</Title>
-            </List.Item>
-            <HoverDiv />
-          </div>
-        </Link>
-      )}
-    />
+                key={post.id}
+                extra={
+                  <img
+                    style={{
+                      ...imageSize(colSize),
+                      margin: '0px 15px 0px 0px',
+                    }}
+                    alt="logo"
+                    src={
+                      post.Images.length > 0
+                        ? post.Images[0].src
+                        : '/not_image.png'
+                    }
+                  />
+                }
+              >
+                <List.Item.Meta
+                  style={{
+                    overflow: 'hidden',
+                  }}
+                  avatar={
+                    <Avatar src={post.User?.avatar || '/not_avatar.jpg'} />
+                  }
+                  title={<Text>{post.User.nickname}</Text>}
+                />
+                <Title level={3}>{post.title}</Title>
+              </List.Item>
+              <HoverDiv />
+            </div>
+          </Link>
+        )}
+      />
+      <div>
+        <Button onClick={handleLeft} disabled={size === 1}>
+          <LeftOutlined />
+        </Button>
+        <span>{size}</span>
+        <Button
+          onClick={handleRight}
+          disabled={postsDataArray[size - 1]?.length !== 6}
+        >
+          <RightOutlined />
+        </Button>
+      </div>
+    </Spin>
   );
 };
 
