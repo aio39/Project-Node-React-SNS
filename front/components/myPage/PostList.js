@@ -21,6 +21,20 @@ const HoverDiv = styled('div')`
   }
 `;
 
+const ButtonWrapper = styled('div')`
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  > span {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 2rem;
+  }
+`;
+
 const PostList = ({ path, userId, linkToWrite }) => {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const colSize = useMediaQuery();
@@ -137,7 +151,7 @@ const PostList = ({ path, userId, linkToWrite }) => {
           </Link>
         )}
       />
-      <div>
+      <ButtonWrapper>
         <Button onClick={handleLeft} disabled={size === 1}>
           <LeftOutlined />
         </Button>
@@ -148,7 +162,7 @@ const PostList = ({ path, userId, linkToWrite }) => {
         >
           <RightOutlined />
         </Button>
-      </div>
+      </ButtonWrapper>
     </Spin>
   );
 };
